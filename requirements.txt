@@ -1,0 +1,2 @@
+# Stage v1 of timeseries-peakbench. Everything runs on CPU.
+pytest>=8
