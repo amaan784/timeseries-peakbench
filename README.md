@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 1 of 12: Project scaffold and configuration
+# timeseries-peakbench, stage 2 of 12: Building load data
 
-The skeleton everything else hangs off: where outputs and the forecast cache live, the one-line switch between the synthetic building and a real meter CSV, the warm-up and context lengths, and a tiny .env reader so an API key can live outside git. Plus the pytest setup and the licence.
+The data layer. A synthetic Boston-area office building at 15-minute resolution (occupancy, weather-driven cooling, random equipment spikes), a loader that reads real interval-data CSVs into the same shape, and the holiday calendars that decide what counts as a business day.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v12` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -15,27 +15,29 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `LICENSE` | MIT |
 | `.gitignore` | what git skips: environments, caches, the raw UCI download, versions/ |
 | `.gitattributes` | line endings (LF for the Makefile and Python files) |
+| `src/data.py` | synthetic building, real CSV loader, holiday calendars, data fingerprint |
+| `tests/conftest.py` | shared fixtures |
+| `tests/test_data.py` | synthetic data shape, CSV loader, holidays |
 
 ## Run it
 
 ```bash
 pip install -r requirements.txt
-python -m pytest -q          # 3 tests
+python -m pytest -q          # 8 tests
 ```
 
 ## Try it
 
-Where outputs and the forecast cache go:
+Monthly peaks of the synthetic building:
 
 ```bash
-python -c "from src import config; print(config.OUT); print(config.CACHE); print(config.DATA_SOURCE)"
+python -c "from src.data import synthetic_load; kw = synthetic_load()['kw'].loc['2025']; print(kw.resample('MS').max().round().to_string())"
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v2`: Building load data
 - `v3`: Baseline forecasters
 - `v4`: Foundation models: TimesFM and TimeGPT
 - `v5`: Tariff and the monthly bill

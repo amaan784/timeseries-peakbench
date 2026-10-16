@@ -1,2 +1,4 @@
-# Stage v1 of timeseries-peakbench. Everything runs on CPU.
+# Stage v2 of timeseries-peakbench. Everything runs on CPU.
+numpy>=1.26
+pandas>=2.1
 pytest>=8

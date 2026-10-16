@@ -1,40 +1,38 @@
-# Stage 1 of 12: Project scaffold and configuration
+# Stage 2 of 12: Building load data
 
-The skeleton everything else hangs off: where outputs and the forecast cache live, the one-line switch between the synthetic building and a real meter CSV, the warm-up and context lengths, and a tiny .env reader so an API key can live outside git. Plus the pytest setup and the licence.
+The data layer. A synthetic Boston-area office building at 15-minute resolution (occupancy, weather-driven cooling, random equipment spikes), a loader that reads real interval-data CSVs into the same shape, and the holiday calendars that decide what counts as a business day.
 
 ## What to review in this layer
 
-- `src/config.py`: paths, `DATA_SOURCE`, `WARMUP_DAYS`, `FM_CONTEXT_DAYS`
-- `load_dotenv()`: reads `.env` without overriding real environment variables
-- `pytest.ini` so test collection stays inside `tests/`
+- `synthetic_load()`: one year of 15-minute kW plus a warm-up, deterministic from a seed
+- `load_interval_csv()`: utility or ISO-NE exports into the same shape, units and DST handled
+- US and Portuguese holiday calendars behind one `is_business_day()`
+- `fingerprint()`: a hash of the data, used later to key the forecast cache
 
 ## Files added in this stage
 
 | File | Size | What it is |
 |---|---:|---|
-| `src/__init__.py` | 0 lines | makes src a package |
-| `src/config.py` | 35 lines | paths, the data-source switch, warm-up and context lengths |
-| `tests/test_config.py` | 23 lines | paths and the .env reader |
-| `pytest.ini` | 4 lines | keeps test collection inside tests/ |
-| `LICENSE` | 21 lines | MIT |
-| `.gitignore` | 25 lines | what git skips: environments, caches, the raw UCI download, versions/ |
-| `.gitattributes` | 4 lines | line endings (LF for the Makefile and Python files) |
+| `src/data.py` | 313 lines | synthetic building, real CSV loader, holiday calendars, data fingerprint |
+| `tests/conftest.py` | 52 lines | shared fixtures |
+| `tests/test_data.py` | 66 lines | synthetic data shape, CSV loader, holidays |
 
 Every file is copied byte for byte from the repo root: stages differ only in which files are present.
 
 ## Checks (`--verify`)
 
 - isolated (imports this folder's own `src`): yes
-- `python -m pytest -q`: ok (2.8s) 3 passed in 0.04s
-- `try-it snippet`: ok (0.2s) synthetic
+- `python -m pytest -q`: ok (8.3s) 8 passed in 1.51s
+- `try-it snippet`: ok (1.6s) Freq: MS
 - style (no comprehensions, ASCII only): clean
 
 ## Commit
 
-**Set up the project: configuration and test scaffolding**
+**Add the synthetic building and an interval-data loader**
 
 ```
-Paths, the one-line switch between the synthetic building and a real meter CSV,
-warm-up and context lengths, and a small .env reader so a Nixtla key can stay out of
-git. pytest config and the MIT licence.
+A generated Boston-area office at 15-minute resolution: occupancy, weather-driven cooling,
+light winter heating and random weekday equipment spikes that set most monthly peaks.
+load_interval_csv() reads real meter exports into the same shape, handling units, DST
+and coarser-than-15-minute data. US and Portuguese holiday calendars.
 ```
