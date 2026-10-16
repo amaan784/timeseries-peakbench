@@ -1,4 +1,5 @@
-# Stage v2 of timeseries-peakbench. Everything runs on CPU.
+# Stage v3 of timeseries-peakbench. Everything runs on CPU.
 numpy>=1.26
 pandas>=2.1
+scikit-learn>=1.4
 pytest>=8

@@ -1,38 +1,37 @@
-# Stage 2 of 12: Building load data
+# Stage 3 of 12: Baseline forecasters
 
-The data layer. A synthetic Boston-area office building at 15-minute resolution (occupancy, weather-driven cooling, random equipment spikes), a loader that reads real interval-data CSVs into the same shape, and the holiday calendars that decide what counts as a business day.
+Day-ahead forecasting without any foundation model. Four forecasters with one signature, each limited to data from before the midnight that starts the day it predicts, and the runner that issues one forecast per day.
 
 ## What to review in this layer
 
-- `synthetic_load()`: one year of 15-minute kW plus a warm-up, deterministic from a seed
-- `load_interval_csv()`: utility or ISO-NE exports into the same shape, units and DST handled
-- US and Portuguese holiday calendars behind one `is_business_day()`
-- `fingerprint()`: a hash of the data, used later to key the forecast cache
+- Oracle (perfect foresight, the ceiling), seasonal naive, 28-day profile
+- Ridge: Fourier time-of-day terms plus 1, 2 and 7-day lags, refit every day
+- `check_history()` and a test that poisons the future to prove nothing leaks
+- `day_ahead()`: one forecast per day, each from that day's history only
 
 ## Files added in this stage
 
 | File | Size | What it is |
 |---|---:|---|
-| `src/data.py` | 313 lines | synthetic building, real CSV loader, holiday calendars, data fingerprint |
-| `tests/conftest.py` | 52 lines | shared fixtures |
-| `tests/test_data.py` | 66 lines | synthetic data shape, CSV loader, holidays |
+| `src/forecast.py` | 178 lines | day-ahead forecasters: oracle, seasonal naive, profile, ridge, and the runner |
+| `tests/test_forecast.py` | 64 lines | no forecaster can see its target day |
 
 Every file is copied byte for byte from the repo root: stages differ only in which files are present.
 
 ## Checks (`--verify`)
 
 - isolated (imports this folder's own `src`): yes
-- `python -m pytest -q`: ok (8.3s) 8 passed in 1.51s
-- `try-it snippet`: ok (1.6s) Freq: MS
+- `python -m pytest -q`: ok (17.4s) 19 passed in 7.76s
+- `try-it snippet`: ok (7.3s) ridge MAPE: 3.3 %
 - style (no comprehensions, ASCII only): clean
 
 ## Commit
 
-**Add the synthetic building and an interval-data loader**
+**Add day-ahead baseline forecasters**
 
 ```
-A generated Boston-area office at 15-minute resolution: occupancy, weather-driven cooling,
-light winter heating and random weekday equipment spikes that set most monthly peaks.
-load_interval_csv() reads real meter exports into the same shape, handling units, DST
-and coarser-than-15-minute data. US and Portuguese holiday calendars.
+Oracle (perfect foresight, the ceiling), seasonal naive, 28-day profile and ridge
+(Fourier time of day plus 1/2/7-day lags, refit daily). All share one signature and
+only see data from before the target day; a test overwrites the future with garbage
+and checks that no forecast changes.
 ```

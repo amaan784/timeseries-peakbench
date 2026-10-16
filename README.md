@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 2 of 12: Building load data
+# timeseries-peakbench, stage 3 of 12: Baseline forecasters
 
-The data layer. A synthetic Boston-area office building at 15-minute resolution (occupancy, weather-driven cooling, random equipment spikes), a loader that reads real interval-data CSVs into the same shape, and the holiday calendars that decide what counts as a business day.
+Day-ahead forecasting without any foundation model. Four forecasters with one signature, each limited to data from before the midnight that starts the day it predicts, and the runner that issues one forecast per day.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v12` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -18,27 +18,28 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `src/data.py` | synthetic building, real CSV loader, holiday calendars, data fingerprint |
 | `tests/conftest.py` | shared fixtures |
 | `tests/test_data.py` | synthetic data shape, CSV loader, holidays |
+| `src/forecast.py` | day-ahead forecasters: oracle, seasonal naive, profile, ridge, and the runner |
+| `tests/test_forecast.py` | no forecaster can see its target day |
 
 ## Run it
 
 ```bash
 pip install -r requirements.txt
-python -m pytest -q          # 8 tests
+python -m pytest -q          # 19 tests
 ```
 
 ## Try it
 
-Monthly peaks of the synthetic building:
+Ridge, day-ahead, over the first four weeks:
 
 ```bash
-python -c "from src.data import synthetic_load; kw = synthetic_load()['kw'].loc['2025']; print(kw.resample('MS').max().round().to_string())"
+python -c "from src.data import synthetic_load, evaluation_days; from src.forecast import day_ahead, ridge; kw = synthetic_load()['kw']; fc = day_ahead(ridge, kw, evaluation_days(kw)[:28]); a = kw.reindex(fc.index); print('ridge MAPE:', round(100 * ((fc - a).abs() / a).mean(), 1), '%')"
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v3`: Baseline forecasters
 - `v4`: Foundation models: TimesFM and TimeGPT
 - `v5`: Tariff and the monthly bill
 - `v6`: Battery and dispatch policies
