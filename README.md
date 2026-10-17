@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 4 of 13: Foundation models: TimesFM and TimeGPT
+# timeseries-peakbench, stage 5 of 13: Tariff and the monthly bill
 
-Two zero-shot foundation models behind the same signature. TimesFM runs locally on CPU, TimeGPT calls Nixtla's API. Both batch a year of day-ahead forecasts and cache them in one Parquet file per model and dataset; the cached TimesFM forecasts for the synthetic building are included (four small files), so nothing here needs torch or a key.
+The money. An illustrative Massachusetts C&I time-of-use rate with a monthly demand charge on the single highest 15-minute interval, and the monthly bill that every later stage scores against.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v13` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -23,27 +23,28 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `src/foundation.py` | TimesFM and TimeGPT, zero-shot, with the forecast cache |
 | `tests/test_foundation.py` | foundation-model batching, cache keys, the no-key skip |
 | `requirements-fm.txt` | optional: TimesFM and the Nixtla client |
+| `src/tariff.py` | illustrative MA tariff and the monthly bill |
+| `tests/test_tariff.py` | the bill, demand charge = max interval x rate |
 
 ## Run it
 
 ```bash
 pip install -r requirements.txt
-python -m pytest -q          # 23 tests
+python -m pytest -q          # 27 tests
 ```
 
 ## Try it
 
-TimesFM 3.0, served from the committed cache:
+The building's bill with no battery:
 
 ```bash
-python -c "from src.data import synthetic_load, evaluation_days; from src.foundation import TimesFMZeroShot; kw = synthetic_load()['kw']; fc = TimesFMZeroShot('3.0').forecast_days(kw, evaluation_days(kw)); print('TimesFM 3.0:', len(fc), 'cached intervals')"
+python -c "from src.data import synthetic_load; from src.tariff import Tariff; kw = synthetic_load()['kw'].loc['2025']; b = Tariff().bill(kw); print(b[['peak_kw', 'demand_cost', 'total']].round().to_string()); print('year:', round(b['total'].sum()))"
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v5`: Tariff and the monthly bill
 - `v6`: Battery and dispatch policies
 - `v7`: Evaluation pipeline
 - `v8`: Charts
