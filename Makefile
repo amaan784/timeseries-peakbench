@@ -1,10 +1,13 @@
 # On Windows without make, run the commands after each target directly.
 PY ?= python
 
-.PHONY: install test
+.PHONY: install test install-fm
 
 install:            ## core dependencies (no torch: foundation-model forecasts come from out/cache)
 	$(PY) -m pip install -r requirements.txt
 
 test:
 	$(PY) -m pytest -q
+
+install-fm:         ## TimesFM (CPU torch) + Nixtla client, only needed to regenerate the cache
+	$(PY) -m pip install -r requirements-fm.txt

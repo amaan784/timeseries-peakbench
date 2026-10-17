@@ -1,0 +1,6 @@
+# Optional: only needed to regenerate the cached foundation-model forecasts in out/cache/.
+# TimesFM runs locally on CPU (first run downloads the checkpoint from Hugging Face:
+# ~1.3 GB for 3.0, ~0.9 GB for 2.5). TimeGPT calls Nixtla's API and needs NIXTLA_API_KEY.
+-r requirements.txt
+timesfm[torch]>=3.0.2
+nixtla>=0.9.0

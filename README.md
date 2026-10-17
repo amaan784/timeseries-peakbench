@@ -1,8 +1,8 @@
-# timeseries-peakbench, stage 3 of 12: Baseline forecasters
+# timeseries-peakbench, stage 4 of 13: Foundation models: TimesFM and TimeGPT
 
-Day-ahead forecasting without any foundation model. Four forecasters with one signature, each limited to data from before the midnight that starts the day it predicts, and the runner that issues one forecast per day.
+Two zero-shot foundation models behind the same signature. TimesFM runs locally on CPU, TimeGPT calls Nixtla's API. Both batch a year of day-ahead forecasts and cache them in one Parquet file per model and dataset; the cached TimesFM forecasts for the synthetic building are included (four small files), so nothing here needs torch or a key.
 
-This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v12` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
+This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v13` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
 ## What's here
 
@@ -20,27 +20,29 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `tests/test_data.py` | synthetic data shape, CSV loader, holidays |
 | `src/forecast.py` | day-ahead forecasters: oracle, seasonal naive, profile, ridge, and the runner |
 | `tests/test_forecast.py` | no forecaster can see its target day |
+| `src/foundation.py` | TimesFM and TimeGPT, zero-shot, with the forecast cache |
+| `tests/test_foundation.py` | foundation-model batching, cache keys, the no-key skip |
+| `requirements-fm.txt` | optional: TimesFM and the Nixtla client |
 
 ## Run it
 
 ```bash
 pip install -r requirements.txt
-python -m pytest -q          # 19 tests
+python -m pytest -q          # 23 tests
 ```
 
 ## Try it
 
-Ridge, day-ahead, over the first four weeks:
+TimesFM 3.0, served from the committed cache:
 
 ```bash
-python -c "from src.data import synthetic_load, evaluation_days; from src.forecast import day_ahead, ridge; kw = synthetic_load()['kw']; fc = day_ahead(ridge, kw, evaluation_days(kw)[:28]); a = kw.reindex(fc.index); print('ridge MAPE:', round(100 * ((fc - a).abs() / a).mean(), 1), '%')"
+python -c "from src.data import synthetic_load, evaluation_days; from src.foundation import TimesFMZeroShot; kw = synthetic_load()['kw']; fc = TimesFMZeroShot('3.0').forecast_days(kw, evaluation_days(kw)); print('TimesFM 3.0:', len(fc), 'cached intervals')"
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v4`: Foundation models: TimesFM and TimeGPT
 - `v5`: Tariff and the monthly bill
 - `v6`: Battery and dispatch policies
 - `v7`: Evaluation pipeline
@@ -48,4 +50,5 @@ Later stages add these. They are simply absent here, nothing is stubbed out:
 - `v9`: Static report
 - `v10`: Dashboard
 - `v11`: Real meter data (UCI)
-- `v12`: Real-meter evaluation (complete project)
+- `v12`: Real-meter evaluation
+- `v13`: Mistral's Timestral (complete project)
