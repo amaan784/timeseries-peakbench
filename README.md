@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 7 of 13: Evaluation pipeline
+# timeseries-peakbench, stage 8 of 13: Charts
 
-The experiment itself. Every forecaster under every policy, plus a timing sweep that shifts the forecast up to an hour early or late, scored as dollars saved on the bill. Runs the synthetic building and its spike-free twin and writes everything to out/.
+The chart library, used by both the report and the dashboard. Five plotly figures in light and dark, one accent colour, units on every axis, and state of charge in its own panel instead of a second axis.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v13` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -28,27 +28,28 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `src/dispatch.py` | battery model, daily target bisection, the three dispatch policies |
 | `tests/test_dispatch.py` | SOC bounds, energy balance, charging cap, power limits |
 | `src/evaluate.py` | forecaster x policy x timing grid, writes out/results.json and CSVs |
+| `src/charts.py` | plotly figures shared by the report and the dashboard |
+| `tests/test_charts.py` | money formatting, policy colours, the timing chart |
 
 ## Run it
 
 ```bash
 pip install -r requirements.txt
-python -m pytest -q          # 212 tests
+python -m pytest -q          # 215 tests
 ```
 
 ## Try it
 
-Run the whole evaluation (about 20-40 s):
+Draw the timing chart from the evaluation output (run the evaluation first):
 
 ```bash
-python -m src.evaluate
+python -c "import pandas as pd; from src import charts; from src.dispatch import POLICY_LABELS; sw = pd.read_csv('out/timing_sweep.csv'); sw = sw[(sw.building == 'with_spikes') & (sw.forecaster == 'oracle')]; charts.money_chart(sw, POLICY_LABELS).write_html('out/timing_chart.html'); print('wrote out/timing_chart.html')"
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v8`: Charts
 - `v9`: Static report
 - `v10`: Dashboard
 - `v11`: Real meter data (UCI)

@@ -1,35 +1,36 @@
-# Stage 7 of 13: Evaluation pipeline
+# Stage 8 of 13: Charts
 
-The experiment itself. Every forecaster under every policy, plus a timing sweep that shifts the forecast up to an hour early or late, scored as dollars saved on the bill. Runs the synthetic building and its spike-free twin and writes everything to out/.
+The chart library, used by both the report and the dashboard. Five plotly figures in light and dark, one accent colour, units on every axis, and state of charge in its own panel instead of a second axis.
 
 ## What to review in this layer
 
-- Forecaster x policy x timing-shift grid, scored on the full bill
-- Per-day forecast error joined to per-day dollars, and the dollars-per-kW-of-error slope
-- Battery-size sensitivity and the no-spike counterfactual building
-- out/results.json plus tidy CSVs; a sanity check that window and threshold agree with a perfect forecast
+- Savings vs timing shift, with the gap at +/-30 minutes bracketed
+- Savings by forecaster, the peak day, monthly demand charges, error vs dollars
+- Money formatting helpers and a fixed colour per policy
 
 ## Files added in this stage
 
 | File | Size | What it is |
 |---|---:|---|
-| `src/evaluate.py` | 532 lines | forecaster x policy x timing grid, writes out/results.json and CSVs |
+| `src/charts.py` | 384 lines | plotly figures shared by the report and the dashboard |
+| `tests/test_charts.py` | 35 lines | money formatting, policy colours, the timing chart |
 
 Every file is copied byte for byte from the repo root, except files a later stage changes: until that stage, they are the earlier version kept in `versions/before/`.
 
 ## Checks (`--verify`)
 
 - isolated (imports this folder's own `src`): yes
-- `python -m pytest -q`: ok (5.8s) 212 passed in 2.34s
-- `python -m src.evaluate`: ok (15.9s) INFO peakshave.evaluate: wrote C:\Users\dell\Desktop\time series project\versions\v7\out\results.json (+ CSVs) in 13.4s
+- `python -m pytest -q`: ok (6.8s) 215 passed in 3.29s
+- `python -m src.evaluate`: ok (15.2s) INFO peakshave.evaluate: wrote C:\Users\dell\Desktop\time series project\versions\v8\out\results.json (+ CSVs) in 12.8s
+- `try-it snippet`: ok (2.0s) wrote out/timing_chart.html
 - style (no comprehensions, ASCII only): clean
 
 ## Commit
 
-**Add the evaluation pipeline**
+**Add the chart library**
 
 ```
-Runs every forecaster under every policy plus a +/-60 minute timing sweep and scores
-each on the full bill. Also per-day error vs dollars, battery-size sensitivity and the
-spike-free twin of the building. Writes out/results.json and tidy CSVs.
+Plotly figures shared by the report and the dashboard: savings vs timing shift with the
++/-30 minute gap bracketed, savings by forecaster, the peak day with state of charge in
+its own panel, monthly demand charges, and error vs dollars. Light and dark themes.
 ```

@@ -1,6 +1,7 @@
-# Stage v7 of timeseries-peakbench. Everything runs on CPU.
+# Stage v8 of timeseries-peakbench. Everything runs on CPU.
 numpy>=1.26
 pandas>=2.1
 scikit-learn>=1.4
+plotly>=6.0
 pyarrow>=14
 pytest>=8
