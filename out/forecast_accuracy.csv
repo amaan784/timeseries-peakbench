@@ -1,0 +1,13 @@
+building,forecaster,label,mape_pct,business_day_mape_pct,rmse_kw,peak_mae_kw,peak_bias_kw,peak_time_mae_min
+with_spikes,oracle,Oracle (perfect foresight),0.0,0.0,0.0,0.0,0.0,0.0
+with_spikes,seasonal_naive,Seasonal naive,6.3213,6.0569,39.9039,74.9122,-4.7584,135.5294
+with_spikes,profile,28-day profile,4.7485,4.9846,25.434,60.9958,-44.4092,120.4706
+with_spikes,ridge,Ridge,5.5235,5.6909,28.3521,65.3928,-47.1729,124.0
+with_spikes,timesfm-3.0,TimesFM 3.0 (zero-shot),5.506,4.7059,35.6817,71.2004,-66.363,109.4118
+with_spikes,timesfm-2.5,TimesFM 2.5 (zero-shot),5.7352,4.7148,35.773,66.1342,-58.0742,105.4706
+no_spikes,oracle,Oracle (perfect foresight),0.0,0.0,0.0,0.0,0.0,0.0
+no_spikes,seasonal_naive,Seasonal naive,6.0101,5.6292,36.1926,36.8902,-4.6337,75.7647
+no_spikes,profile,28-day profile,4.5469,4.6961,22.4675,30.1975,-8.3292,70.3529
+no_spikes,ridge,Ridge,5.2908,5.3757,25.7461,36.176,-9.1454,74.5294
+no_spikes,timesfm-3.0,TimesFM 3.0 (zero-shot),5.2777,4.3225,32.5658,31.4585,-21.8801,65.2353
+no_spikes,timesfm-2.5,TimesFM 2.5 (zero-shot),5.5757,4.4862,33.3405,31.0153,-16.266,61.5882

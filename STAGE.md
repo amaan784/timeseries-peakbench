@@ -1,37 +1,35 @@
-# Stage 6 of 13: Battery and dispatch policies
+# Stage 7 of 13: Evaluation pipeline
 
-The physics. A battery model and a simulator with three dispatch policies that all start from the same forecast-based daily kW target, so any difference between them comes from how each handles a wrong forecast.
+The experiment itself. Every forecaster under every policy, plus a timing sweep that shifts the forecast up to an hour early or late, scored as dollars saved on the bill. Runs the synthetic building and its spike-free twin and writes everything to out/.
 
 ## What to review in this layer
 
-- `Battery` and `daily_targets()`: the lowest target the battery could hold if the forecast were right
-- `simulate()`: window (follows the forecast's schedule), threshold (reacts to the meter), ratchet
-- SOC limits, no export, off-peak charging that is paced and never goes above the day's target
-- Tests for SOC bounds, energy balance, the charging cap and power limits
+- Forecaster x policy x timing-shift grid, scored on the full bill
+- Per-day forecast error joined to per-day dollars, and the dollars-per-kW-of-error slope
+- Battery-size sensitivity and the no-spike counterfactual building
+- out/results.json plus tidy CSVs; a sanity check that window and threshold agree with a perfect forecast
 
 ## Files added in this stage
 
 | File | Size | What it is |
 |---|---:|---|
-| `src/dispatch.py` | 260 lines | battery model, daily target bisection, the three dispatch policies |
-| `tests/test_dispatch.py` | 114 lines | SOC bounds, energy balance, charging cap, power limits |
+| `src/evaluate.py` | 532 lines | forecaster x policy x timing grid, writes out/results.json and CSVs |
 
 Every file is copied byte for byte from the repo root, except files a later stage changes: until that stage, they are the earlier version kept in `versions/before/`.
 
 ## Checks (`--verify`)
 
 - isolated (imports this folder's own `src`): yes
-- `python -m pytest -q`: ok (6.1s) 212 passed in 2.39s
-- `try-it snippet`: ok (1.0s) saved with perfect foresight: $ 52197
+- `python -m pytest -q`: ok (5.8s) 212 passed in 2.34s
+- `python -m src.evaluate`: ok (15.9s) INFO peakshave.evaluate: wrote C:\Users\dell\Desktop\time series project\versions\v7\out\results.json (+ CSVs) in 13.4s
 - style (no comprehensions, ASCII only): clean
 
 ## Commit
 
-**Add the battery model and three dispatch policies**
+**Add the evaluation pipeline**
 
 ```
-All three policies share one forecast-based daily target: window follows the
-forecast's schedule, threshold reacts to the meter, ratchet also never shaves below a
-peak already billed this month. With a perfect forecast window and threshold are
-identical. Charging is off-peak only, paced, and never above the day's target.
+Runs every forecaster under every policy plus a +/-60 minute timing sweep and scores
+each on the full bill. Also per-day error vs dollars, battery-size sensitivity and the
+spike-free twin of the building. Writes out/results.json and tidy CSVs.
 ```

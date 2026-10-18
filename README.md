@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 6 of 13: Battery and dispatch policies
+# timeseries-peakbench, stage 7 of 13: Evaluation pipeline
 
-The physics. A battery model and a simulator with three dispatch policies that all start from the same forecast-based daily kW target, so any difference between them comes from how each handles a wrong forecast.
+The experiment itself. Every forecaster under every policy, plus a timing sweep that shifts the forecast up to an hour early or late, scored as dollars saved on the bill. Runs the synthetic building and its spike-free twin and writes everything to out/.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v13` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -27,6 +27,7 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `tests/test_tariff.py` | the bill, demand charge = max interval x rate |
 | `src/dispatch.py` | battery model, daily target bisection, the three dispatch policies |
 | `tests/test_dispatch.py` | SOC bounds, energy balance, charging cap, power limits |
+| `src/evaluate.py` | forecaster x policy x timing grid, writes out/results.json and CSVs |
 
 ## Run it
 
@@ -37,17 +38,16 @@ python -m pytest -q          # 212 tests
 
 ## Try it
 
-What a perfect forecast is worth with the default battery:
+Run the whole evaluation (about 20-40 s):
 
 ```bash
-python -c "from src.data import synthetic_load, evaluation_days; from src.dispatch import Battery, simulate; from src.tariff import Tariff; kw = synthetic_load()['kw']; a = kw.loc[evaluation_days(kw)[0]:]; t = Tariff(); net = simulate(a, a, Battery(), t, 'threshold')['net_kw']; print('saved with perfect foresight: $', round(t.bill(a)['total'].sum() - t.bill(net)['total'].sum()))"
+python -m src.evaluate
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v7`: Evaluation pipeline
 - `v8`: Charts
 - `v9`: Static report
 - `v10`: Dashboard
