@@ -1,35 +1,37 @@
-# Stage 5 of 13: Tariff and the monthly bill
+# Stage 6 of 13: Battery and dispatch policies
 
-The money. An illustrative Massachusetts C&I time-of-use rate with a monthly demand charge on the single highest 15-minute interval, and the monthly bill that every later stage scores against.
+The physics. A battery model and a simulator with three dispatch policies that all start from the same forecast-based daily kW target, so any difference between them comes from how each handles a wrong forecast.
 
 ## What to review in this layer
 
-- `Tariff`: demand charge, on/off-peak energy rates, the 8am-9pm business-day window
-- `bill()`: peak kW, kWh, energy charge, demand charge and total per month
-- Tests: the demand charge is exactly the month's highest interval times the rate
+- `Battery` and `daily_targets()`: the lowest target the battery could hold if the forecast were right
+- `simulate()`: window (follows the forecast's schedule), threshold (reacts to the meter), ratchet
+- SOC limits, no export, off-peak charging that is paced and never goes above the day's target
+- Tests for SOC bounds, energy balance, the charging cap and power limits
 
 ## Files added in this stage
 
 | File | Size | What it is |
 |---|---:|---|
-| `src/tariff.py` | 69 lines | illustrative MA tariff and the monthly bill |
-| `tests/test_tariff.py` | 44 lines | the bill, demand charge = max interval x rate |
+| `src/dispatch.py` | 260 lines | battery model, daily target bisection, the three dispatch policies |
+| `tests/test_dispatch.py` | 114 lines | SOC bounds, energy balance, charging cap, power limits |
 
 Every file is copied byte for byte from the repo root, except files a later stage changes: until that stage, they are the earlier version kept in `versions/before/`.
 
 ## Checks (`--verify`)
 
 - isolated (imports this folder's own `src`): yes
-- `python -m pytest -q`: ok (5.7s) 27 passed in 1.85s
-- `try-it snippet`: ok (1.2s) year: 579413
+- `python -m pytest -q`: ok (6.1s) 212 passed in 2.39s
+- `try-it snippet`: ok (1.0s) saved with perfect foresight: $ 52197
 - style (no comprehensions, ASCII only): clean
 
 ## Commit
 
-**Add the illustrative MA tariff and the monthly bill**
+**Add the battery model and three dispatch policies**
 
 ```
-A demand charge on the month's single highest 15-minute interval plus time-of-use
-energy (on-peak 8am-9pm on business days). bill() returns peak kW, kWh, energy and
-demand charges per month. Illustrative, not a filed rate.
+All three policies share one forecast-based daily target: window follows the
+forecast's schedule, threshold reacts to the meter, ratchet also never shaves below a
+peak already billed this month. With a perfect forecast window and threshold are
+identical. Charging is off-peak only, paced, and never above the day's target.
 ```
