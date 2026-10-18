@@ -1,36 +1,34 @@
-# Stage 8 of 13: Charts
+# Stage 9 of 13: Static report
 
-The chart library, used by both the report and the dashboard. Five plotly figures in light and dark, one accent colour, units on every axis, and state of charge in its own panel instead of a second axis.
+A standalone HTML report that reads only the evaluation output, so every number and sentence on the page comes from a run. Also writes docs/index.html for GitHub Pages.
 
 ## What to review in this layer
 
-- Savings vs timing shift, with the gap at +/-30 minutes bracketed
-- Savings by forecaster, the peak day, monthly demand charges, error vs dollars
-- Money formatting helpers and a fixed colour per policy
+- Findings, captions and headings generated from the results, including when they go against the thesis
+- The bill as a ledger, five chart sections with toggles, accuracy and robustness tables
+- Light/dark themes and the chart toggles in plain JS
 
 ## Files added in this stage
 
 | File | Size | What it is |
 |---|---:|---|
-| `src/charts.py` | 384 lines | plotly figures shared by the report and the dashboard |
-| `tests/test_charts.py` | 35 lines | money formatting, policy colours, the timing chart |
+| `src/report.py` | 1208 lines | standalone HTML report and the generated README results |
 
 Every file is copied byte for byte from the repo root, except files a later stage changes: until that stage, they are the earlier version kept in `versions/before/`.
 
 ## Checks (`--verify`)
 
 - isolated (imports this folder's own `src`): yes
-- `python -m pytest -q`: ok (6.8s) 215 passed in 3.29s
-- `python -m src.evaluate`: ok (15.2s) INFO peakshave.evaluate: wrote C:\Users\dell\Desktop\time series project\versions\v8\out\results.json (+ CSVs) in 12.8s
-- `try-it snippet`: ok (2.0s) wrote out/timing_chart.html
+- `python -m pytest -q`: ok (6.8s) 215 passed in 3.26s
+- `python -m src.evaluate`: ok (15.1s) INFO peakshave.evaluate: wrote C:\Users\dell\Desktop\time series project\versions\v9\out\results.json (+ CSVs) in 12.4s
+- `python -m src.report`: ok (3.4s) wrote C:\Users\dell\Desktop\time series project\versions\v9\out\report.html and C:\Users\dell\Desktop\time series project\versions\v9\docs\index.html (0.4 MB)
 - style (no comprehensions, ASCII only): clean
 
 ## Commit
 
-**Add the chart library**
+**Add the standalone HTML report**
 
 ```
-Plotly figures shared by the report and the dashboard: savings vs timing shift with the
-+/-30 minute gap bracketed, savings by forecaster, the peak day with state of charge in
-its own panel, monthly demand charges, and error vs dollars. Light and dark themes.
+Reads only out/results.json and the CSVs, so all of its text and numbers are generated
+from a run. Writes out/report.html and docs/index.html for GitHub Pages.
 ```

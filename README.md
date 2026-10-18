@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 8 of 13: Charts
+# timeseries-peakbench, stage 9 of 13: Static report
 
-The chart library, used by both the report and the dashboard. Five plotly figures in light and dark, one accent colour, units on every axis, and state of charge in its own panel instead of a second axis.
+A standalone HTML report that reads only the evaluation output, so every number and sentence on the page comes from a run. Also writes docs/index.html for GitHub Pages.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v13` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -30,6 +30,7 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `src/evaluate.py` | forecaster x policy x timing grid, writes out/results.json and CSVs |
 | `src/charts.py` | plotly figures shared by the report and the dashboard |
 | `tests/test_charts.py` | money formatting, policy colours, the timing chart |
+| `src/report.py` | standalone HTML report and the generated README results |
 
 ## Run it
 
@@ -40,17 +41,16 @@ python -m pytest -q          # 215 tests
 
 ## Try it
 
-Draw the timing chart from the evaluation output (run the evaluation first):
+Build the report (after the evaluation):
 
 ```bash
-python -c "import pandas as pd; from src import charts; from src.dispatch import POLICY_LABELS; sw = pd.read_csv('out/timing_sweep.csv'); sw = sw[(sw.building == 'with_spikes') & (sw.forecaster == 'oracle')]; charts.money_chart(sw, POLICY_LABELS).write_html('out/timing_chart.html'); print('wrote out/timing_chart.html')"
+python -m src.report
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v9`: Static report
 - `v10`: Dashboard
 - `v11`: Real meter data (UCI)
 - `v12`: Real-meter evaluation
