@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 10 of 13: Dashboard
+# timeseries-peakbench, stage 11 of 13: Real meter data (UCI)
 
-The interactive version. A Streamlit app that re-runs the simulation live for any battery size, demand charge, forecaster, policy, timing shift and month range, laid out like a utility bill.
+Real data. Six buildings from UCI's ElectricityLoadDiagrams20112014 (Portugal, 15-minute kW, CC BY 4.0), picked by a rule fixed before any results were run, cleaned and stored as small CSVs with the attribution.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v13` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -33,26 +33,34 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `src/report.py` | standalone HTML report and the generated README results |
 | `app.py` | Streamlit dashboard |
 | `.streamlit/config.toml` | dashboard theme |
+| `src/uci.py` | downloads the UCI meters, cleans them, picks six by a fixed rule |
+| `tests/test_uci.py` | UCI DST fixes and timestamps |
+| `data/uci` | six cleaned real meters (CC BY 4.0) and how they were picked |
 
 ## Run it
 
 ```bash
 pip install -r requirements.txt
-python -m pytest -q          # 215 tests
+python -m pytest -q          # 219 tests
 ```
 
 ## Try it
 
-Open the dashboard (after the evaluation):
+Which buildings were picked, and one of them:
 
 ```bash
-streamlit run app.py
+python -c "import json; from src.data import load_interval_csv; s = json.load(open('data/uci/selection.json')); print(s['n_eligible'], 'of', s['n_clients'], 'clients pass the rule; picked', ', '.join(s['picked'])); kw = load_interval_csv('data/uci/MT_128.csv')['kw']; print('MT_128:', len(kw) // 96, 'days, peak', round(kw.max()), 'kW')"
+```
+
+Rebuild data/uci/ from the original 250 MB download:
+
+```bash
+python -m src.uci
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v11`: Real meter data (UCI)
 - `v12`: Real-meter evaluation
 - `v13`: Mistral's Timestral (complete project)

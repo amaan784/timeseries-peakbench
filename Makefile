@@ -1,7 +1,7 @@
 # On Windows without make, run the commands after each target directly.
 PY ?= python
 
-.PHONY: install test install-fm run forecasts report app
+.PHONY: install test install-fm run forecasts report app uci
 
 install:            ## core dependencies (no torch: foundation-model forecasts come from out/cache)
 	$(PY) -m pip install -r requirements.txt
@@ -23,3 +23,6 @@ report:             ## out/report.html + docs/index.html, and refresh the README
 
 app:                ## the Streamlit dashboard
 	$(PY) -m streamlit run app.py
+
+uci:                ## re-download the UCI file and rebuild data/uci/ (250 MB download)
+	$(PY) -m src.uci

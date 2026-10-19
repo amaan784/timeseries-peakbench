@@ -48,7 +48,7 @@
    45,
    60
   ],
-  "runtime_seconds": 13.3
+  "runtime_seconds": 13.5
  },
  "buildings": {
   "with_spikes": {
@@ -56,12 +56,12 @@
    "data_label": "Synthetic data: a generated C&I building, not a real meter",
    "fingerprint": "8fa4b9177a",
    "forecast_seconds": {
-    "oracle": 0.1,
-    "seasonal_naive": 0.22,
-    "profile": 0.56,
-    "ridge": 2.16,
-    "timesfm-3.0": 0.13,
-    "timesfm-2.5": 0.05
+    "oracle": 0.11,
+    "seasonal_naive": 0.23,
+    "profile": 0.57,
+    "ridge": 2.26,
+    "timesfm-3.0": 0.1,
+    "timesfm-2.5": 0.04
    },
    "annual_peak_timestamp": "2025-07-22 15:00:00",
    "annual_peak_kw": 797.1,
@@ -370,11 +370,11 @@
    "data_label": "Synthetic data: a generated C&I building, not a real meter (equipment spikes removed)",
    "fingerprint": "7886d719ee",
    "forecast_seconds": {
-    "oracle": 0.17,
-    "seasonal_naive": 0.41,
-    "profile": 0.86,
-    "ridge": 2.49,
-    "timesfm-3.0": 0.07,
+    "oracle": 0.12,
+    "seasonal_naive": 0.27,
+    "profile": 0.8,
+    "ridge": 2.68,
+    "timesfm-3.0": 0.04,
     "timesfm-2.5": 0.04
    },
    "annual_peak_timestamp": "2025-07-30 15:30:00",

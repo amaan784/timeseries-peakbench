@@ -1,0 +1,54 @@
+{
+ "source": "UCI ElectricityLoadDiagrams20112014 (Trindade, 2015), CC BY 4.0",
+ "url": "https://archive.ics.uci.edu/static/public/321/electricityloaddiagrams20112014.zip",
+ "rule": {
+  "years": [
+   2013,
+   2014
+  ],
+  "max_zero_share": 0.005,
+  "peak_min_kw": 100,
+  "peak_max_kw": 2000,
+  "min_weekday_ratio": 1.3,
+  "n_pick": 6,
+  "seed": 2014
+ },
+ "n_clients": 370,
+ "n_eligible": 28,
+ "picked": {
+  "MT_059": {
+   "peak_2013_kw": 232.7,
+   "mean_2013_kw": 120.5,
+   "weekday_ratio": 1.41
+  },
+  "MT_061": {
+   "peak_2013_kw": 181.5,
+   "mean_2013_kw": 77.7,
+   "weekday_ratio": 1.36
+  },
+  "MT_128": {
+   "peak_2013_kw": 783.1,
+   "mean_2013_kw": 295.9,
+   "weekday_ratio": 3.35
+  },
+  "MT_151": {
+   "peak_2013_kw": 289.0,
+   "mean_2013_kw": 96.3,
+   "weekday_ratio": 1.88
+  },
+  "MT_158": {
+   "peak_2013_kw": 223.2,
+   "mean_2013_kw": 68.2,
+   "weekday_ratio": 6.06
+  },
+  "MT_164": {
+   "peak_2013_kw": 269.7,
+   "mean_2013_kw": 98.1,
+   "weekday_ratio": 3.39
+  }
+ },
+ "export": [
+  "2013-10-01",
+  "2014-12-31 23:45"
+ ]
+}
