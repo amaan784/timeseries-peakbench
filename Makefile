@@ -1,7 +1,7 @@
 # On Windows without make, run the commands after each target directly.
 PY ?= python
 
-.PHONY: install test install-fm run forecasts report
+.PHONY: install test install-fm run forecasts report app
 
 install:            ## core dependencies (no torch: foundation-model forecasts come from out/cache)
 	$(PY) -m pip install -r requirements.txt
@@ -20,3 +20,6 @@ forecasts:          ## rerun the foundation models for any (model, date) missing
 
 report:             ## out/report.html + docs/index.html, and refresh the README results section
 	$(PY) -m src.report
+
+app:                ## the Streamlit dashboard
+	$(PY) -m streamlit run app.py

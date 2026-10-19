@@ -1,6 +1,6 @@
-# timeseries-peakbench, stage 9 of 13: Static report
+# timeseries-peakbench, stage 10 of 13: Dashboard
 
-A standalone HTML report that reads only the evaluation output, so every number and sentence on the page comes from a run. Also writes docs/index.html for GitHub Pages.
+The interactive version. A Streamlit app that re-runs the simulation live for any battery size, demand charge, forecaster, policy, timing shift and month range, laid out like a utility bill.
 
 This folder is a cumulative snapshot: everything from the earlier stages plus this one, and it runs on its own. The finished project is `v13` (identical to the repo root). See `STAGE.md` for what this stage adds and how to review it.
 
@@ -31,6 +31,8 @@ This folder is a cumulative snapshot: everything from the earlier stages plus th
 | `src/charts.py` | plotly figures shared by the report and the dashboard |
 | `tests/test_charts.py` | money formatting, policy colours, the timing chart |
 | `src/report.py` | standalone HTML report and the generated README results |
+| `app.py` | Streamlit dashboard |
+| `.streamlit/config.toml` | dashboard theme |
 
 ## Run it
 
@@ -41,17 +43,16 @@ python -m pytest -q          # 215 tests
 
 ## Try it
 
-Build the report (after the evaluation):
+Open the dashboard (after the evaluation):
 
 ```bash
-python -m src.report
+streamlit run app.py
 ```
 
 ## Not in this stage yet
 
 Later stages add these. They are simply absent here, nothing is stubbed out:
 
-- `v10`: Dashboard
 - `v11`: Real meter data (UCI)
 - `v12`: Real-meter evaluation
 - `v13`: Mistral's Timestral (complete project)
