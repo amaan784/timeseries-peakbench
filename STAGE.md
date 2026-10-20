@@ -1,40 +1,49 @@
-# Stage 11 of 13: Real meter data (UCI)
+# Stage 12 of 13: Real-meter evaluation
 
-Real data. Six buildings from UCI's ElectricityLoadDiagrams20112014 (Portugal, 15-minute kW, CC BY 4.0), picked by a rule fixed before any results were run, cleaned and stored as small CSVs with the attribution.
+The check against real data. The same forecasters, policies and tariff on the six real meters, with Portuguese holidays and each battery sized from the building's 2013 peak. Also brings in the full README, Makefile and requirements.
 
 ## What to review in this layer
 
-- `src/uci.py`: download, DST fixes, end-of-interval to start-of-interval timestamps
-- The selection rule: complete data, a 2013 peak of 100-2,000 kW, an office-like weekly pattern
-- data/uci/: the six cleaned meters, selection.json, and the CC BY 4.0 attribution
+- `src/real_meters.py`: the experiment per building, written to out/real/
+- The cached TimesFM forecasts for the six meters
+- The real-meter results appear in the report and the dashboard
+- The full README with generated results, the complete Makefile and requirements
 
 ## Files added in this stage
 
 | File | Size | What it is |
 |---|---:|---|
-| `src/uci.py` | 182 lines | downloads the UCI meters, cleans them, picks six by a fixed rule |
-| `tests/test_uci.py` | 40 lines | UCI DST fixes and timestamps |
-| `data/uci` | 8 files | six cleaned real meters (CC BY 4.0) and how they were picked |
+| `src/real_meters.py` | 147 lines | the same experiment on the six real meters |
+| `tests/test_real_meters.py` | 16 lines | battery sizing, the six picked meters are present |
+| `README.md` | 214 lines | the full project README |
+| `requirements.txt` | 8 lines | the full dependency list |
+| `Makefile` | 33 lines | every target: install, run, real, uci, test, report, app |
+| `out/cache/timesfm-3.0/227a678ffa.parquet` | 0.7 MB | a year of cached day-ahead forecasts for one dataset, a row per 15 minutes |
+| `out/cache/timesfm-3.0/2d3f7f743b.parquet` | 0.6 MB | a year of cached day-ahead forecasts for one dataset, a row per 15 minutes |
+| `out/cache/timesfm-3.0/4f5021e674.parquet` | 0.7 MB | a year of cached day-ahead forecasts for one dataset, a row per 15 minutes |
+| `out/cache/timesfm-3.0/672404e66e.parquet` | 0.7 MB | a year of cached day-ahead forecasts for one dataset, a row per 15 minutes |
+| `out/cache/timesfm-3.0/fe1a8764dd.parquet` | 0.6 MB | a year of cached day-ahead forecasts for one dataset, a row per 15 minutes |
+| `out/cache/timesfm-3.0/febcf0a347.parquet` | 0.8 MB | a year of cached day-ahead forecasts for one dataset, a row per 15 minutes |
 
 Every file is copied byte for byte from the repo root, except files a later stage changes: until that stage, they are the earlier version kept in `versions/before/`.
 
 ## Checks (`--verify`)
 
 - isolated (imports this folder's own `src`): yes
-- `python -m pytest -q`: ok (6.2s) 219 passed in 2.66s
-- `python -m src.evaluate`: ok (16.1s) INFO peakshave.evaluate: wrote C:\Users\dell\Desktop\time series project\versions\v11\out\results.json (+ CSVs) in 13.5s
-- `python -m src.report`: ok (4.4s) wrote C:\Users\dell\Desktop\time series project\versions\v11\out\report.html and C:\Users\dell\Desktop\time series project\versions\v11\docs\index.html (0.4 MB)
-- `dashboard (streamlit AppTest, headless)`: ok (6.8s) 2026-10-17 01:38:18.516 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
-- `try-it snippet`: ok (1.1s) MT_128: 457 days, peak 772 kW
+- `python -m pytest -q`: ok (6.3s) 221 passed in 2.67s
+- `python -m src.evaluate`: ok (16.3s) INFO peakshave.evaluate: wrote C:\Users\dell\Desktop\time series project\versions\v12\out\results.json (+ CSVs) in 13.9s
+- `python -m src.real_meters`: ok (35.4s) INFO peakshave.real: MT_164 done (32s so far)
+- `python -m src.report`: ok (3.4s) refreshed the results section of README.md
+- `dashboard (streamlit AppTest, headless)`: ok (7.2s) 2026-10-17 01:39:27.968 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
 - style (no comprehensions, ASCII only): clean
 
 ## Commit
 
-**Add six real meters from the UCI dataset**
+**Run the experiment on the real meters, and add the full README**
 
 ```
-src/uci.py downloads ElectricityLoadDiagrams20112014 (Portugal, 15-minute kW, CC BY
-4.0), fixes its DST quirks and end-of-interval timestamps, and picks six buildings
-with a rule fixed before any results: complete data, a 2013 peak of 100-2,000 kW and
-an office-like weekly pattern. The cleaned meters are in data/uci/ with attribution.
+src/real_meters.py runs the same forecasters, policies and tariff on the six UCI
+buildings with Portuguese holidays, sizing each battery at 30% of its 2013 peak. Adds
+their cached TimesFM forecasts; their results now appear in the report and dashboard.
+The README with generated results, the full Makefile and requirements.
 ```
