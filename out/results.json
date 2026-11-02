@@ -28,7 +28,8 @@
    "profile": "28-day profile",
    "ridge": "Ridge",
    "timesfm-3.0": "TimesFM 3.0 (zero-shot)",
-   "timesfm-2.5": "TimesFM 2.5 (zero-shot)"
+   "timesfm-2.5": "TimesFM 2.5 (zero-shot)",
+   "timestral-209m": "Timestral 209M (zero-shot)"
   },
   "policies": {
    "threshold": "Threshold",
@@ -48,7 +49,7 @@
    45,
    60
   ],
-  "runtime_seconds": 13.9
+  "runtime_seconds": 14.1
  },
  "buildings": {
   "with_spikes": {
@@ -56,12 +57,13 @@
    "data_label": "Synthetic data: a generated C&I building, not a real meter",
    "fingerprint": "8fa4b9177a",
    "forecast_seconds": {
-    "oracle": 0.12,
-    "seasonal_naive": 0.23,
-    "profile": 0.58,
-    "ridge": 2.63,
-    "timesfm-3.0": 0.12,
-    "timesfm-2.5": 0.04
+    "oracle": 0.11,
+    "seasonal_naive": 0.21,
+    "profile": 0.56,
+    "ridge": 2.39,
+    "timesfm-3.0": 0.1,
+    "timesfm-2.5": 0.04,
+    "timestral-209m": 0.04
    },
    "annual_peak_timestamp": "2025-07-22 15:00:00",
    "annual_peak_kw": 797.1,
@@ -78,21 +80,24 @@
       "ridge": 21.68,
       "seasonal_naive": 18.5,
       "timesfm-2.5": 20.89,
-      "timesfm-3.0": 15.85
+      "timesfm-3.0": 15.85,
+      "timestral-209m": 23.52
      },
      "ratchet": {
       "profile": 65.94,
       "ridge": 61.84,
       "seasonal_naive": 62.34,
       "timesfm-2.5": 67.49,
-      "timesfm-3.0": 63.62
+      "timesfm-3.0": 63.62,
+      "timestral-209m": 64.37
      },
      "window": {
       "profile": 34.58,
       "ridge": 34.57,
       "seasonal_naive": 31.74,
       "timesfm-2.5": 31.73,
-      "timesfm-3.0": 34.55
+      "timesfm-3.0": 34.55,
+      "timestral-209m": 34.45
      }
     },
     "savings_usd": {
@@ -101,33 +106,36 @@
       "ridge": 11314.0,
       "seasonal_naive": 9655.0,
       "timesfm-2.5": 10903.0,
-      "timesfm-3.0": 8271.0
+      "timesfm-3.0": 8271.0,
+      "timestral-209m": 12276.0
      },
      "ratchet": {
       "profile": 33085.0,
       "ridge": 31024.0,
       "seasonal_naive": 31278.0,
       "timesfm-2.5": 33863.0,
-      "timesfm-3.0": 31917.0
+      "timesfm-3.0": 31917.0,
+      "timestral-209m": 32296.0
      },
      "window": {
       "profile": 18050.0,
       "ridge": 18046.0,
       "seasonal_naive": 16569.0,
       "timesfm-2.5": 16562.0,
-      "timesfm-3.0": 18032.0
+      "timesfm-3.0": 18032.0,
+      "timestral-209m": 17984.0
      }
     },
     "best_policy": "ratchet",
     "forecaster_spread_usd": {
-     "threshold": 3043.1066821118584,
+     "threshold": 4005.2466898608254,
      "ratchet": 2839.0450056917034,
      "window": 1488.7733471012907
     },
     "forecaster_spread_pct": {
      "threshold": [
       15.845030790455407,
-      21.675075291107397
+      23.518362315518047
      ],
      "ratchet": [
       61.83621618134337,
@@ -143,7 +151,8 @@
      "ridge": 19710.0,
      "seasonal_naive": 21623.0,
      "timesfm-2.5": 22960.0,
-     "timesfm-3.0": 23647.0
+     "timesfm-3.0": 23647.0,
+     "timestral-209m": 20021.0
     },
     "best_forecaster_by_peak_mae": "profile",
     "timing": {
@@ -356,12 +365,47 @@
        "+45": 16170.344105295953,
        "+60": 15743.239950489602
       }
+     },
+     "timestral-209m": {
+      "threshold": {
+       "-60": 12275.85930403613,
+       "-45": 12275.863231016207,
+       "-30": 12275.86694870214,
+       "-15": 12275.87025331182,
+       "+0": 12275.872938307235,
+       "+15": 12275.872938307235,
+       "+30": 12275.872938307235,
+       "+45": 12275.872938307235,
+       "+60": 12275.872938307235
+      },
+      "ratchet": {
+       "-60": 32296.39908961323,
+       "-45": 32296.39908961323,
+       "-30": 32296.39908961323,
+       "-15": 32296.39908961323,
+       "+0": 32296.39908961323,
+       "+15": 32296.39908961323,
+       "+30": 32296.39908961323,
+       "+45": 32296.39908961323,
+       "+60": 32296.39908961323
+      },
+      "window": {
+       "-60": 14656.79555479018,
+       "-45": 15187.532518486842,
+       "-30": 16500.766772205476,
+       "-15": 17471.401137300534,
+       "+0": 17984.424908374902,
+       "+15": 17682.36616990983,
+       "+30": 16904.034701542812,
+       "+45": 16364.534497490386,
+       "+60": 15761.425481974264
+      }
      }
     },
     "usd_lost_per_kw_error_pooled": {
-     "ratchet": 4.37,
-     "threshold": 10.26,
-     "window": 11.83
+     "ratchet": 4.71,
+     "threshold": 10.35,
+     "window": 12.53
     }
    }
   },
@@ -370,12 +414,13 @@
    "data_label": "Synthetic data: a generated C&I building, not a real meter (equipment spikes removed)",
    "fingerprint": "7886d719ee",
    "forecast_seconds": {
-    "oracle": 0.15,
-    "seasonal_naive": 0.29,
-    "profile": 0.66,
-    "ridge": 2.26,
-    "timesfm-3.0": 0.06,
-    "timesfm-2.5": 0.04
+    "oracle": 0.12,
+    "seasonal_naive": 0.23,
+    "profile": 0.61,
+    "ridge": 2.15,
+    "timesfm-3.0": 0.03,
+    "timesfm-2.5": 0.03,
+    "timestral-209m": 0.03
    },
    "annual_peak_timestamp": "2025-07-30 15:30:00",
    "annual_peak_kw": 696.8,
@@ -392,21 +437,24 @@
       "ridge": 19.59,
       "seasonal_naive": 19.64,
       "timesfm-2.5": 24.67,
-      "timesfm-3.0": 22.77
+      "timesfm-3.0": 22.77,
+      "timestral-209m": 23.64
      },
      "ratchet": {
       "profile": 51.61,
       "ridge": 46.55,
       "seasonal_naive": 43.02,
       "timesfm-2.5": 50.61,
-      "timesfm-3.0": 54.09
+      "timesfm-3.0": 54.09,
+      "timestral-209m": 51.7
      },
      "window": {
       "profile": 77.08,
       "ridge": 76.13,
       "seasonal_naive": 67.02,
       "timesfm-2.5": 77.15,
-      "timesfm-3.0": 77.42
+      "timesfm-3.0": 77.42,
+      "timestral-209m": 78.67
      }
     },
     "savings_usd": {
@@ -415,28 +463,31 @@
       "ridge": 4926.0,
       "seasonal_naive": 4939.0,
       "timesfm-2.5": 6203.0,
-      "timesfm-3.0": 5725.0
+      "timesfm-3.0": 5725.0,
+      "timestral-209m": 5945.0
      },
      "ratchet": {
       "profile": 11967.0,
       "ridge": 10795.0,
       "seasonal_naive": 9977.0,
       "timesfm-2.5": 11735.0,
-      "timesfm-3.0": 12544.0
+      "timesfm-3.0": 12544.0,
+      "timestral-209m": 11988.0
      },
      "window": {
       "profile": 19384.0,
       "ridge": 19144.0,
       "seasonal_naive": 16854.0,
       "timesfm-2.5": 19402.0,
-      "timesfm-3.0": 19469.0
+      "timesfm-3.0": 19469.0,
+      "timestral-209m": 19784.0
      }
     },
     "best_policy": "window",
     "forecaster_spread_usd": {
      "threshold": 1277.0830783694983,
      "ratchet": 2566.868687526323,
-     "window": 2615.0143826495623
+     "window": 2929.6694147038506
     },
     "forecaster_spread_pct": {
      "threshold": [
@@ -449,7 +500,7 @@
      ],
      "window": [
       67.01984913592844,
-      77.41815650121337
+      78.66934645987776
      ]
     },
     "policy_spread_usd": {
@@ -457,9 +508,10 @@
      "ridge": 14218.0,
      "seasonal_naive": 11916.0,
      "timesfm-2.5": 13198.0,
-     "timesfm-3.0": 13744.0
+     "timesfm-3.0": 13744.0,
+     "timestral-209m": 13839.0
     },
-    "best_forecaster_by_peak_mae": "profile",
+    "best_forecaster_by_peak_mae": "timestral-209m",
     "timing": {
      "oracle": {
       "threshold": {
@@ -526,12 +578,23 @@
       "window": {
        "+0": 19401.55973242235
       }
+     },
+     "timestral-209m": {
+      "threshold": {
+       "+0": 5945.431270131725
+      },
+      "ratchet": {
+       "+0": 11988.270054345601
+      },
+      "window": {
+       "+0": 19784.130747378105
+      }
      }
     },
     "usd_lost_per_kw_error_pooled": {
-     "ratchet": 2.08,
-     "threshold": 12.06,
-     "window": 3.56
+     "ratchet": 2.25,
+     "threshold": 12.67,
+     "window": 3.59
     }
    }
   }
@@ -862,6 +925,60 @@
    "pct_of_best_oracle": 31.729
   },
   {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "policy": "threshold",
+   "policy_label": "Threshold",
+   "bill_without": 579413.0968,
+   "bill_with": 567137.2238,
+   "savings_usd": 12275.8729,
+   "savings_pct": 2.1187,
+   "demand_savings_usd": 8815.4,
+   "energy_savings_usd": 3460.4729,
+   "annual_peak_cut_kw": 17.0,
+   "avg_monthly_peak_cut_kw": 33.3917,
+   "ran_out_days_pct": 60.3922,
+   "pct_of_oracle": 23.5184,
+   "pct_of_best_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "policy": "ratchet",
+   "policy_label": "Threshold + ratchet",
+   "bill_without": 579413.0968,
+   "bill_with": 547116.6977,
+   "savings_usd": 32296.3991,
+   "savings_pct": 5.574,
+   "demand_savings_usd": 31356.0212,
+   "energy_savings_usd": 940.3779,
+   "annual_peak_cut_kw": 35.1,
+   "avg_monthly_peak_cut_kw": 118.7728,
+   "ran_out_days_pct": 6.6667,
+   "pct_of_oracle": 64.3726,
+   "pct_of_best_oracle": 61.8741
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "policy": "window",
+   "policy_label": "Window",
+   "bill_without": 579413.0968,
+   "bill_with": 561428.6718,
+   "savings_usd": 17984.4249,
+   "savings_pct": 3.1039,
+   "demand_savings_usd": 13933.6267,
+   "energy_savings_usd": 4050.7982,
+   "annual_peak_cut_kw": 68.1551,
+   "avg_monthly_peak_cut_kw": 52.7789,
+   "ran_out_days_pct": null,
+   "pct_of_oracle": 34.4549,
+   "pct_of_best_oracle": 34.4549
+  },
+  {
    "building": "no_spikes",
    "forecaster": "oracle",
    "label": "Oracle (perfect foresight)",
@@ -1184,6 +1301,60 @@
    "ran_out_days_pct": null,
    "pct_of_oracle": 77.1481,
    "pct_of_best_oracle": 77.1481
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "policy": "threshold",
+   "policy_label": "Threshold",
+   "bill_without": 548457.8605,
+   "bill_with": 542512.4292,
+   "savings_usd": 5945.4313,
+   "savings_pct": 1.084,
+   "demand_savings_usd": 2596.0,
+   "energy_savings_usd": 3349.4313,
+   "annual_peak_cut_kw": 0.0,
+   "avg_monthly_peak_cut_kw": 9.8333,
+   "ran_out_days_pct": 55.2941,
+   "pct_of_oracle": 23.6413,
+   "pct_of_best_oracle": 23.6413
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "policy": "ratchet",
+   "policy_label": "Threshold + ratchet",
+   "bill_without": 548457.8605,
+   "bill_with": 536469.5904,
+   "savings_usd": 11988.2701,
+   "savings_pct": 2.1858,
+   "demand_savings_usd": 11053.2233,
+   "energy_savings_usd": 935.0468,
+   "annual_peak_cut_kw": 35.8414,
+   "avg_monthly_peak_cut_kw": 41.8683,
+   "ran_out_days_pct": 7.0588,
+   "pct_of_oracle": 51.698,
+   "pct_of_best_oracle": 47.67
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "policy": "window",
+   "policy_label": "Window",
+   "bill_without": 548457.8605,
+   "bill_with": 528673.7298,
+   "savings_usd": 19784.1307,
+   "savings_pct": 3.6072,
+   "demand_savings_usd": 15730.9774,
+   "energy_savings_usd": 4053.1533,
+   "annual_peak_cut_kw": 65.5683,
+   "avg_monthly_peak_cut_kw": 59.587,
+   "ran_out_days_pct": null,
+   "pct_of_oracle": 78.6693,
+   "pct_of_best_oracle": 78.6693
   }
  ],
  "timing_sweep": [
@@ -2646,6 +2817,249 @@
    "pct_of_oracle": 30.1612
   },
   {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": -4,
+   "shift_minutes": -60,
+   "savings_usd": 12275.8593,
+   "pct_of_oracle": 23.5183
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": -3,
+   "shift_minutes": -45,
+   "savings_usd": 12275.8632,
+   "pct_of_oracle": 23.5183
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": -2,
+   "shift_minutes": -30,
+   "savings_usd": 12275.8669,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": -1,
+   "shift_minutes": -15,
+   "savings_usd": 12275.8703,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": 0,
+   "shift_minutes": 0,
+   "savings_usd": 12275.8729,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": 1,
+   "shift_minutes": 15,
+   "savings_usd": 12275.8729,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": 2,
+   "shift_minutes": 30,
+   "savings_usd": 12275.8729,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": 3,
+   "shift_minutes": 45,
+   "savings_usd": 12275.8729,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": 4,
+   "shift_minutes": 60,
+   "savings_usd": 12275.8729,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": -4,
+   "shift_minutes": -60,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": -3,
+   "shift_minutes": -45,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": -2,
+   "shift_minutes": -30,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": -1,
+   "shift_minutes": -15,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": 0,
+   "shift_minutes": 0,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": 1,
+   "shift_minutes": 15,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": 2,
+   "shift_minutes": 30,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": 3,
+   "shift_minutes": 45,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": 4,
+   "shift_minutes": 60,
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": -4,
+   "shift_minutes": -60,
+   "savings_usd": 14656.7956,
+   "pct_of_oracle": 28.0798
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": -3,
+   "shift_minutes": -45,
+   "savings_usd": 15187.5325,
+   "pct_of_oracle": 29.0966
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": -2,
+   "shift_minutes": -30,
+   "savings_usd": 16500.7668,
+   "pct_of_oracle": 31.6125
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": -1,
+   "shift_minutes": -15,
+   "savings_usd": 17471.4011,
+   "pct_of_oracle": 33.4721
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": 0,
+   "shift_minutes": 0,
+   "savings_usd": 17984.4249,
+   "pct_of_oracle": 34.4549
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": 1,
+   "shift_minutes": 15,
+   "savings_usd": 17682.3662,
+   "pct_of_oracle": 33.8762
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": 2,
+   "shift_minutes": 30,
+   "savings_usd": 16904.0347,
+   "pct_of_oracle": 32.3851
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": 3,
+   "shift_minutes": 45,
+   "savings_usd": 16364.5345,
+   "pct_of_oracle": 31.3515
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": 4,
+   "shift_minutes": 60,
+   "savings_usd": 15761.4255,
+   "pct_of_oracle": 30.1961
+  },
+  {
    "building": "no_spikes",
    "forecaster": "oracle",
    "policy": "threshold",
@@ -2806,6 +3220,33 @@
    "shift_minutes": 0,
    "savings_usd": 19401.5597,
    "pct_of_oracle": 77.1481
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "shift_intervals": 0,
+   "shift_minutes": 0,
+   "savings_usd": 5945.4313,
+   "pct_of_oracle": 23.6413
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "shift_intervals": 0,
+   "shift_minutes": 0,
+   "savings_usd": 11988.2701,
+   "pct_of_oracle": 51.698
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "shift_intervals": 0,
+   "shift_minutes": 0,
+   "savings_usd": 19784.1307,
+   "pct_of_oracle": 78.6693
   }
  ],
  "error_slopes": [
@@ -2946,30 +3387,57 @@
   },
   {
    "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "usd_lost_per_kw_error": 6.6336,
+   "intercept_usd": 459.2524,
+   "r": 0.3969,
+   "n_days": 255
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "usd_lost_per_kw_error": 10.8073,
+   "intercept_usd": 505.2663,
+   "r": 0.5816,
+   "n_days": 255
+  },
+  {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "usd_lost_per_kw_error": 16.4418,
+   "intercept_usd": 422.0861,
+   "r": 0.8068,
+   "n_days": 255
+  },
+  {
+   "building": "with_spikes",
    "forecaster": "all",
    "policy": "ratchet",
-   "usd_lost_per_kw_error": 4.3719,
-   "intercept_usd": 549.1633,
-   "r": 0.2992,
-   "n_days": 1275
+   "usd_lost_per_kw_error": 4.7072,
+   "intercept_usd": 535.1597,
+   "r": 0.315,
+   "n_days": 1530
   },
   {
    "building": "with_spikes",
    "forecaster": "all",
    "policy": "threshold",
-   "usd_lost_per_kw_error": 10.2649,
-   "intercept_usd": 526.1911,
-   "r": 0.5634,
-   "n_days": 1275
+   "usd_lost_per_kw_error": 10.3451,
+   "intercept_usd": 522.9493,
+   "r": 0.5664,
+   "n_days": 1530
   },
   {
    "building": "with_spikes",
    "forecaster": "all",
    "policy": "window",
-   "usd_lost_per_kw_error": 11.8274,
-   "intercept_usd": 695.2292,
-   "r": 0.6187,
-   "n_days": 1275
+   "usd_lost_per_kw_error": 12.5331,
+   "intercept_usd": 650.2791,
+   "r": 0.6491,
+   "n_days": 1530
   },
   {
    "building": "no_spikes",
@@ -3108,30 +3576,57 @@
   },
   {
    "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "usd_lost_per_kw_error": 4.068,
+   "intercept_usd": 446.733,
+   "r": 0.2188,
+   "n_days": 255
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "usd_lost_per_kw_error": 19.917,
+   "intercept_usd": 349.4111,
+   "r": 0.766,
+   "n_days": 255
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "usd_lost_per_kw_error": 3.5514,
+   "intercept_usd": 309.78,
+   "r": 0.4769,
+   "n_days": 255
+  },
+  {
+   "building": "no_spikes",
    "forecaster": "all",
    "policy": "ratchet",
-   "usd_lost_per_kw_error": 2.0827,
-   "intercept_usd": 510.1109,
-   "r": 0.1645,
-   "n_days": 1275
+   "usd_lost_per_kw_error": 2.25,
+   "intercept_usd": 502.6695,
+   "r": 0.1707,
+   "n_days": 1530
   },
   {
    "building": "no_spikes",
    "forecaster": "all",
    "policy": "threshold",
-   "usd_lost_per_kw_error": 12.0627,
-   "intercept_usd": 546.5824,
-   "r": 0.6883,
-   "n_days": 1275
+   "usd_lost_per_kw_error": 12.674,
+   "intercept_usd": 527.691,
+   "r": 0.6927,
+   "n_days": 1530
   },
   {
    "building": "no_spikes",
    "forecaster": "all",
    "policy": "window",
-   "usd_lost_per_kw_error": 3.5552,
-   "intercept_usd": 341.6846,
-   "r": 0.5815,
-   "n_days": 1275
+   "usd_lost_per_kw_error": 3.5853,
+   "intercept_usd": 335.3921,
+   "r": 0.5744,
+   "n_days": 1530
   }
  ],
  "monthly": [
@@ -6160,6 +6655,510 @@
    "total_after": 46344.9994
   },
   {
+   "building": "with_spikes",
+   "month": "2025-01",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 647.8,
+   "peak_kw_after": 647.8,
+   "demand_cost_before": 14251.6,
+   "demand_cost_after": 14251.6,
+   "energy_cost_before": 34042.337,
+   "energy_cost_after": 33668.7136,
+   "total_before": 48293.937,
+   "total_after": 47920.3136
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-02",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 628.9,
+   "peak_kw_after": 628.9,
+   "demand_cost_before": 13835.8,
+   "demand_cost_after": 13835.8,
+   "energy_cost_before": 30960.788,
+   "energy_cost_after": 30673.9665,
+   "total_before": 44796.588,
+   "total_after": 44509.7665
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-03",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 635.3,
+   "peak_kw_after": 592.0,
+   "demand_cost_before": 13976.6,
+   "demand_cost_after": 13024.0,
+   "energy_cost_before": 32792.5278,
+   "energy_cost_after": 32497.6637,
+   "total_before": 46769.1278,
+   "total_after": 45521.6637
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-04",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 676.5,
+   "peak_kw_after": 600.5,
+   "demand_cost_before": 14883.0,
+   "demand_cost_after": 13211.0,
+   "energy_cost_before": 31579.4785,
+   "energy_cost_after": 31256.4515,
+   "total_before": 46462.4785,
+   "total_after": 44467.4515
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-05",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 632.0,
+   "peak_kw_after": 595.2,
+   "demand_cost_before": 13904.0,
+   "demand_cost_after": 13094.4,
+   "energy_cost_before": 31506.3032,
+   "energy_cost_after": 31213.3028,
+   "total_before": 45410.3032,
+   "total_after": 44307.7028
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-06",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 707.5,
+   "peak_kw_after": 691.7,
+   "demand_cost_before": 15565.0,
+   "demand_cost_after": 15217.4,
+   "energy_cost_before": 33985.719,
+   "energy_cost_after": 33762.678,
+   "total_before": 49550.719,
+   "total_after": 48980.078
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-07",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 797.1,
+   "peak_kw_after": 696.8,
+   "demand_cost_before": 17536.2,
+   "demand_cost_after": 15329.6,
+   "energy_cost_before": 40433.535,
+   "energy_cost_after": 40119.1466,
+   "total_before": 57969.735,
+   "total_after": 55448.7466
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-08",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 780.1,
+   "peak_kw_after": 780.1,
+   "demand_cost_before": 17162.2,
+   "demand_cost_after": 17162.2,
+   "energy_cost_before": 36909.9388,
+   "energy_cost_after": 36638.8477,
+   "total_before": 54072.1388,
+   "total_after": 53801.0477
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-09",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 715.2,
+   "peak_kw_after": 715.2,
+   "demand_cost_before": 15734.4,
+   "demand_cost_after": 15734.4,
+   "energy_cost_before": 33596.1843,
+   "energy_cost_after": 33384.3282,
+   "total_before": 49330.5843,
+   "total_after": 49118.7282
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-10",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 608.3,
+   "peak_kw_after": 608.3,
+   "demand_cost_before": 13382.6,
+   "demand_cost_after": 13382.6,
+   "energy_cost_before": 32170.4918,
+   "energy_cost_after": 31839.6221,
+   "total_before": 45553.0918,
+   "total_after": 45222.2221
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-11",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 614.4,
+   "peak_kw_after": 573.6,
+   "demand_cost_before": 13516.8,
+   "demand_cost_after": 12619.2,
+   "energy_cost_before": 29826.454,
+   "energy_cost_after": 29558.6444,
+   "total_before": 43343.254,
+   "total_after": 42177.8444
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-12",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 634.4,
+   "peak_kw_after": 546.7,
+   "demand_cost_before": 13956.8,
+   "demand_cost_after": 12027.4,
+   "energy_cost_before": 33904.3395,
+   "energy_cost_after": 33634.2587,
+   "total_before": 47861.1395,
+   "total_after": 45661.6587
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-01",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 647.8,
+   "peak_kw_after": 464.7,
+   "demand_cost_before": 14251.6,
+   "demand_cost_after": 10223.4,
+   "energy_cost_before": 34042.337,
+   "energy_cost_after": 33885.4187,
+   "total_before": 48293.937,
+   "total_after": 44108.8187
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-02",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 628.9,
+   "peak_kw_after": 623.6,
+   "demand_cost_before": 13835.8,
+   "demand_cost_after": 13719.2,
+   "energy_cost_before": 30960.788,
+   "energy_cost_after": 30972.3396,
+   "total_before": 44796.588,
+   "total_after": 44691.5396
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-03",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 635.3,
+   "peak_kw_after": 592.0,
+   "demand_cost_before": 13976.6,
+   "demand_cost_after": 13024.0,
+   "energy_cost_before": 32792.5278,
+   "energy_cost_after": 32767.6898,
+   "total_before": 46769.1278,
+   "total_after": 45791.6898
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-04",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 676.5,
+   "peak_kw_after": 534.8,
+   "demand_cost_before": 14883.0,
+   "demand_cost_after": 11765.6,
+   "energy_cost_before": 31579.4785,
+   "energy_cost_after": 31419.3857,
+   "total_before": 46462.4785,
+   "total_after": 43184.9857
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-05",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 632.0,
+   "peak_kw_after": 532.5,
+   "demand_cost_before": 13904.0,
+   "demand_cost_after": 11715.0,
+   "energy_cost_before": 31506.3032,
+   "energy_cost_after": 31478.4423,
+   "total_before": 45410.3032,
+   "total_after": 43193.4423
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-06",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 707.5,
+   "peak_kw_after": 530.4,
+   "demand_cost_before": 15565.0,
+   "demand_cost_after": 11668.8,
+   "energy_cost_before": 33985.719,
+   "energy_cost_after": 33892.3801,
+   "total_before": 49550.719,
+   "total_after": 45561.1801
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-07",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 797.1,
+   "peak_kw_after": 660.9586,
+   "demand_cost_before": 17536.2,
+   "demand_cost_after": 14541.0901,
+   "energy_cost_before": 40433.535,
+   "energy_cost_after": 40377.2697,
+   "total_before": 57969.735,
+   "total_after": 54918.3599
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-08",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 780.1,
+   "peak_kw_after": 762.0,
+   "demand_cost_before": 17162.2,
+   "demand_cost_after": 16764.0,
+   "energy_cost_before": 36909.9388,
+   "energy_cost_after": 36879.6242,
+   "total_before": 54072.1388,
+   "total_after": 53643.6242
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-09",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 715.2,
+   "peak_kw_after": 617.3,
+   "demand_cost_before": 15734.4,
+   "demand_cost_after": 13580.6,
+   "energy_cost_before": 33596.1843,
+   "energy_cost_after": 33510.8602,
+   "total_before": 49330.5843,
+   "total_after": 47091.4602
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-10",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 608.3,
+   "peak_kw_after": 435.2677,
+   "demand_cost_before": 13382.6,
+   "demand_cost_after": 9575.8887,
+   "energy_cost_before": 32170.4918,
+   "energy_cost_after": 32105.4525,
+   "total_before": 45553.0918,
+   "total_after": 41681.3412
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-11",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 614.4,
+   "peak_kw_after": 453.4,
+   "demand_cost_before": 13516.8,
+   "demand_cost_after": 9974.8,
+   "energy_cost_before": 29826.454,
+   "energy_cost_after": 29777.456,
+   "total_before": 43343.254,
+   "total_after": 39752.256
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-12",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 634.4,
+   "peak_kw_after": 445.3,
+   "demand_cost_before": 13956.8,
+   "demand_cost_after": 9796.6,
+   "energy_cost_before": 33904.3395,
+   "energy_cost_after": 33701.3998,
+   "total_before": 47861.1395,
+   "total_after": 43497.9998
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-01",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 647.8,
+   "peak_kw_after": 608.8506,
+   "demand_cost_before": 14251.6,
+   "demand_cost_after": 13394.7138,
+   "energy_cost_before": 34042.337,
+   "energy_cost_after": 33639.9366,
+   "total_before": 48293.937,
+   "total_after": 47034.6504
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-02",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 628.9,
+   "peak_kw_after": 595.8628,
+   "demand_cost_before": 13835.8,
+   "demand_cost_after": 13108.9809,
+   "energy_cost_before": 30960.788,
+   "energy_cost_after": 30638.0004,
+   "total_before": 44796.588,
+   "total_after": 43746.9813
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-03",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 635.3,
+   "peak_kw_after": 573.081,
+   "demand_cost_before": 13976.6,
+   "demand_cost_after": 12607.7815,
+   "energy_cost_before": 32792.5278,
+   "energy_cost_after": 32475.8421,
+   "total_before": 46769.1278,
+   "total_after": 45083.6235
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-04",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 676.5,
+   "peak_kw_after": 622.3766,
+   "demand_cost_before": 14883.0,
+   "demand_cost_after": 13692.2842,
+   "energy_cost_before": 31579.4785,
+   "energy_cost_after": 31224.6487,
+   "total_before": 46462.4785,
+   "total_after": 44916.933
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-05",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 632.0,
+   "peak_kw_after": 602.2061,
+   "demand_cost_before": 13904.0,
+   "demand_cost_after": 13248.5345,
+   "energy_cost_before": 31506.3032,
+   "energy_cost_after": 31162.8087,
+   "total_before": 45410.3032,
+   "total_after": 44411.3433
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-06",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 707.5,
+   "peak_kw_after": 642.5462,
+   "demand_cost_before": 15565.0,
+   "demand_cost_after": 14136.0172,
+   "energy_cost_before": 33985.719,
+   "energy_cost_after": 33665.766,
+   "total_before": 49550.719,
+   "total_after": 47801.7832
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-07",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 797.1,
+   "peak_kw_after": 714.817,
+   "demand_cost_before": 17536.2,
+   "demand_cost_after": 15725.9736,
+   "energy_cost_before": 40433.535,
+   "energy_cost_after": 40087.2425,
+   "total_before": 57969.735,
+   "total_after": 55813.2161
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-08",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 780.1,
+   "peak_kw_after": 728.9449,
+   "demand_cost_before": 17162.2,
+   "demand_cost_after": 16036.7875,
+   "energy_cost_before": 36909.9388,
+   "energy_cost_after": 36573.3657,
+   "total_before": 54072.1388,
+   "total_after": 52610.1532
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-09",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 715.2,
+   "peak_kw_after": 636.8075,
+   "demand_cost_before": 15734.4,
+   "demand_cost_after": 14009.7654,
+   "energy_cost_before": 33596.1843,
+   "energy_cost_after": 33275.4939,
+   "total_before": 49330.5843,
+   "total_after": 47285.2593
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-10",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 608.3,
+   "peak_kw_after": 561.1361,
+   "demand_cost_before": 13382.6,
+   "demand_cost_after": 12344.9933,
+   "energy_cost_before": 32170.4918,
+   "energy_cost_after": 31779.807,
+   "total_before": 45553.0918,
+   "total_after": 44124.8003
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-11",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 614.4,
+   "peak_kw_after": 574.4388,
+   "demand_cost_before": 13516.8,
+   "demand_cost_after": 12637.6527,
+   "energy_cost_before": 29826.454,
+   "energy_cost_after": 29534.6049,
+   "total_before": 43343.254,
+   "total_after": 42172.2576
+  },
+  {
+   "building": "with_spikes",
+   "month": "2025-12",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 634.4,
+   "peak_kw_after": 583.0859,
+   "demand_cost_before": 13956.8,
+   "demand_cost_after": 12827.8887,
+   "energy_cost_before": 33904.3395,
+   "energy_cost_after": 33599.7821,
+   "total_before": 47861.1395,
+   "total_after": 46427.6708
+  },
+  {
    "building": "no_spikes",
    "month": "2025-01",
    "forecaster": "oracle",
@@ -9182,6 +10181,510 @@
    "energy_cost_after": 33520.0232,
    "total_before": 45022.146,
    "total_after": 43519.409
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-01",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 518.0,
+   "peak_kw_after": 498.7,
+   "demand_cost_before": 11396.0,
+   "demand_cost_after": 10971.4,
+   "energy_cost_before": 33920.0102,
+   "energy_cost_after": 33551.8593,
+   "total_before": 45316.0102,
+   "total_after": 44523.2593
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-02",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 533.1,
+   "peak_kw_after": 516.4,
+   "demand_cost_before": 11728.2,
+   "demand_cost_after": 11360.8,
+   "energy_cost_before": 30788.534,
+   "energy_cost_after": 30518.2422,
+   "total_before": 42516.734,
+   "total_after": 41879.0422
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-03",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 505.4,
+   "peak_kw_after": 483.7,
+   "demand_cost_before": 11118.8,
+   "demand_cost_after": 10641.4,
+   "energy_cost_before": 32603.8958,
+   "energy_cost_after": 32318.8271,
+   "total_before": 43722.6958,
+   "total_after": 42960.2271
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-04",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 558.5,
+   "peak_kw_after": 558.5,
+   "demand_cost_before": 12287.0,
+   "demand_cost_after": 12287.0,
+   "energy_cost_before": 31397.7672,
+   "energy_cost_after": 31089.8258,
+   "total_before": 43684.7673,
+   "total_after": 43376.8258
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-05",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 559.6,
+   "peak_kw_after": 559.6,
+   "demand_cost_before": 12311.2,
+   "demand_cost_after": 12311.2,
+   "energy_cost_before": 31350.2278,
+   "energy_cost_after": 31060.9997,
+   "total_before": 43661.4278,
+   "total_after": 43372.1997
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-06",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 607.8,
+   "peak_kw_after": 607.8,
+   "demand_cost_before": 13371.6,
+   "demand_cost_after": 13371.6,
+   "energy_cost_before": 33843.4945,
+   "energy_cost_after": 33635.6687,
+   "total_before": 47215.0945,
+   "total_after": 47007.2687
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-07",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 696.8,
+   "peak_kw_after": 696.8,
+   "demand_cost_before": 15329.6,
+   "demand_cost_after": 15329.6,
+   "energy_cost_before": 40308.2252,
+   "energy_cost_after": 39998.0429,
+   "total_before": 55637.8252,
+   "total_after": 55327.6429
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-08",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 646.9,
+   "peak_kw_after": 635.0,
+   "demand_cost_before": 14231.8,
+   "demand_cost_after": 13970.0,
+   "energy_cost_before": 36629.3848,
+   "energy_cost_after": 36373.5191,
+   "total_before": 50861.1848,
+   "total_after": 50343.5191
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-09",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 633.7,
+   "peak_kw_after": 633.7,
+   "demand_cost_before": 13941.4,
+   "demand_cost_after": 13941.4,
+   "energy_cost_before": 33444.8255,
+   "energy_cost_after": 33241.5949,
+   "total_before": 47386.2255,
+   "total_after": 47182.9949
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-10",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 486.3,
+   "peak_kw_after": 471.9,
+   "demand_cost_before": 10698.6,
+   "demand_cost_after": 10381.8,
+   "energy_cost_before": 32032.0055,
+   "energy_cost_after": 31706.343,
+   "total_before": 42730.6055,
+   "total_after": 42088.143
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-11",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 498.1,
+   "peak_kw_after": 477.6,
+   "demand_cost_before": 10958.2,
+   "demand_cost_after": 10507.2,
+   "energy_cost_before": 29744.944,
+   "energy_cost_after": 29484.0233,
+   "total_before": 40703.144,
+   "total_after": 39991.2233
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-12",
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "peak_kw_before": 509.1,
+   "peak_kw_after": 495.6,
+   "demand_cost_before": 11200.2,
+   "demand_cost_after": 10903.2,
+   "energy_cost_before": 33821.946,
+   "energy_cost_after": 33556.8833,
+   "total_before": 45022.146,
+   "total_after": 44460.0833
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-01",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 518.0,
+   "peak_kw_after": 498.7,
+   "demand_cost_before": 11396.0,
+   "demand_cost_after": 10971.4,
+   "energy_cost_before": 33920.0102,
+   "energy_cost_after": 33829.5868,
+   "total_before": 45316.0102,
+   "total_after": 44800.9868
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-02",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 533.1,
+   "peak_kw_after": 516.4,
+   "demand_cost_before": 11728.2,
+   "demand_cost_after": 11360.8,
+   "energy_cost_before": 30788.534,
+   "energy_cost_after": 30781.8487,
+   "total_before": 42516.734,
+   "total_after": 42142.6487
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-03",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 505.4,
+   "peak_kw_after": 445.2,
+   "demand_cost_before": 11118.8,
+   "demand_cost_after": 9794.4,
+   "energy_cost_before": 32603.8958,
+   "energy_cost_after": 32414.7048,
+   "total_before": 43722.6958,
+   "total_after": 42209.1048
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-04",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 558.5,
+   "peak_kw_after": 530.0,
+   "demand_cost_before": 12287.0,
+   "demand_cost_after": 11660.0,
+   "energy_cost_before": 31397.7672,
+   "energy_cost_after": 31290.96,
+   "total_before": 43684.7673,
+   "total_after": 42950.96
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-05",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 559.6,
+   "peak_kw_after": 537.8,
+   "demand_cost_before": 12311.2,
+   "demand_cost_after": 11831.6,
+   "energy_cost_before": 31350.2278,
+   "energy_cost_after": 31305.5879,
+   "total_before": 43661.4278,
+   "total_after": 43137.1879
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-06",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 607.8,
+   "peak_kw_after": 530.4,
+   "demand_cost_before": 13371.6,
+   "demand_cost_after": 11668.8,
+   "energy_cost_before": 33843.4945,
+   "energy_cost_after": 33773.0821,
+   "total_before": 47215.0945,
+   "total_after": 45441.8821
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-07",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 696.8,
+   "peak_kw_after": 660.9586,
+   "demand_cost_before": 15329.6,
+   "demand_cost_after": 14541.0901,
+   "energy_cost_before": 40308.2252,
+   "energy_cost_after": 40264.4651,
+   "total_before": 55637.8252,
+   "total_after": 54805.5552
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-08",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 646.9,
+   "peak_kw_after": 575.1025,
+   "demand_cost_before": 14231.8,
+   "demand_cost_after": 12652.2559,
+   "energy_cost_before": 36629.3848,
+   "energy_cost_after": 36576.4339,
+   "total_before": 50861.1848,
+   "total_after": 49228.6898
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-09",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 633.7,
+   "peak_kw_after": 617.3,
+   "demand_cost_before": 13941.4,
+   "demand_cost_after": 13580.6,
+   "energy_cost_before": 33444.8255,
+   "energy_cost_after": 33364.7449,
+   "total_before": 47386.2255,
+   "total_after": 46945.3449
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-10",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 486.3,
+   "peak_kw_after": 440.3196,
+   "demand_cost_before": 10698.6,
+   "demand_cost_after": 9687.0308,
+   "energy_cost_before": 32032.0055,
+   "energy_cost_after": 32004.4621,
+   "total_before": 42730.6055,
+   "total_after": 41691.4929
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-11",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 498.1,
+   "peak_kw_after": 453.4,
+   "demand_cost_before": 10958.2,
+   "demand_cost_after": 9974.8,
+   "energy_cost_before": 29744.944,
+   "energy_cost_after": 29711.0498,
+   "total_before": 40703.144,
+   "total_after": 39685.8498
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-12",
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "peak_kw_before": 509.1,
+   "peak_kw_after": 445.3,
+   "demand_cost_before": 11200.2,
+   "demand_cost_after": 9796.6,
+   "energy_cost_before": 33821.946,
+   "energy_cost_after": 33633.2876,
+   "total_before": 45022.146,
+   "total_after": 43429.8876
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-01",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 518.0,
+   "peak_kw_after": 466.4625,
+   "demand_cost_before": 11396.0,
+   "demand_cost_after": 10262.1755,
+   "energy_cost_before": 33920.0102,
+   "energy_cost_after": 33517.4494,
+   "total_before": 45316.0102,
+   "total_after": 43779.6249
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-02",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 533.1,
+   "peak_kw_after": 471.6664,
+   "demand_cost_before": 11728.2,
+   "demand_cost_after": 10376.6599,
+   "energy_cost_before": 30788.534,
+   "energy_cost_after": 30465.7711,
+   "total_before": 42516.734,
+   "total_after": 40842.4309
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-03",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 505.4,
+   "peak_kw_after": 446.0148,
+   "demand_cost_before": 11118.8,
+   "demand_cost_after": 9812.3263,
+   "energy_cost_before": 32603.8958,
+   "energy_cost_after": 32286.8475,
+   "total_before": 43722.6958,
+   "total_after": 42099.1738
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-04",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 558.5,
+   "peak_kw_after": 497.826,
+   "demand_cost_before": 12287.0,
+   "demand_cost_after": 10952.1723,
+   "energy_cost_before": 31397.7672,
+   "energy_cost_after": 31042.4704,
+   "total_before": 43684.7673,
+   "total_after": 41994.6427
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-05",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 559.6,
+   "peak_kw_after": 524.0435,
+   "demand_cost_before": 12311.2,
+   "demand_cost_after": 11528.9562,
+   "energy_cost_before": 31350.2278,
+   "energy_cost_after": 31005.6119,
+   "total_before": 43661.4278,
+   "total_after": 42534.5681
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-06",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 607.8,
+   "peak_kw_after": 536.5917,
+   "demand_cost_before": 13371.6,
+   "demand_cost_after": 11805.0175,
+   "energy_cost_before": 33843.4945,
+   "energy_cost_after": 33524.1965,
+   "total_before": 47215.0945,
+   "total_after": 45329.214
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-07",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 696.8,
+   "peak_kw_after": 631.2317,
+   "demand_cost_before": 15329.6,
+   "demand_cost_after": 13887.0974,
+   "energy_cost_before": 40308.2252,
+   "energy_cost_after": 39962.0431,
+   "total_before": 55637.8252,
+   "total_after": 53849.1406
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-08",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 646.9,
+   "peak_kw_after": 572.5282,
+   "demand_cost_before": 14231.8,
+   "demand_cost_after": 12595.621,
+   "energy_cost_before": 36629.3848,
+   "energy_cost_after": 36292.0282,
+   "total_before": 50861.1848,
+   "total_after": 48887.6493
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-09",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 633.7,
+   "peak_kw_after": 559.6331,
+   "demand_cost_before": 13941.4,
+   "demand_cost_after": 12311.9293,
+   "energy_cost_before": 33444.8255,
+   "energy_cost_after": 33124.477,
+   "total_before": 47386.2255,
+   "total_after": 45436.4062
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-10",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 486.3,
+   "peak_kw_after": 433.7323,
+   "demand_cost_before": 10698.6,
+   "demand_cost_after": 9542.1102,
+   "energy_cost_before": 32032.0055,
+   "energy_cost_after": 31641.2959,
+   "total_before": 42730.6055,
+   "total_after": 41183.406
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-11",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 498.1,
+   "peak_kw_after": 440.9253,
+   "demand_cost_before": 10958.2,
+   "demand_cost_after": 9700.357,
+   "energy_cost_before": 29744.944,
+   "energy_cost_after": 29452.7798,
+   "total_before": 40703.144,
+   "total_after": 39153.1367
+  },
+  {
+   "building": "no_spikes",
+   "month": "2025-12",
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "peak_kw_before": 509.1,
+   "peak_kw_after": 457.6,
+   "demand_cost_before": 11200.2,
+   "demand_cost_after": 10067.2,
+   "energy_cost_before": 33821.946,
+   "energy_cost_after": 33517.1364,
+   "total_before": 45022.146,
+   "total_after": 43584.3364
   }
  ],
  "forecast_accuracy": [
@@ -9252,6 +10755,17 @@
    "peak_time_mae_min": 105.4706
   },
   {
+   "building": "with_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "mape_pct": 4.7145,
+   "business_day_mape_pct": 3.9915,
+   "rmse_kw": 30.3097,
+   "peak_mae_kw": 62.0151,
+   "peak_bias_kw": -56.0414,
+   "peak_time_mae_min": 110.5294
+  },
+  {
    "building": "no_spikes",
    "forecaster": "oracle",
    "label": "Oracle (perfect foresight)",
@@ -9316,6 +10830,17 @@
    "peak_mae_kw": 31.0153,
    "peak_bias_kw": -16.266,
    "peak_time_mae_min": 61.5882
+  },
+  {
+   "building": "no_spikes",
+   "forecaster": "timestral-209m",
+   "label": "Timestral 209M (zero-shot)",
+   "mape_pct": 4.5427,
+   "business_day_mape_pct": 3.7837,
+   "rmse_kw": 27.8705,
+   "peak_mae_kw": 25.5612,
+   "peak_bias_kw": -13.2932,
+   "peak_time_mae_min": 59.4706
   }
  ],
  "battery_sensitivity": [
@@ -9501,6 +11026,36 @@
   },
   {
    "building": "with_spikes",
+   "case": "Half-size battery",
+   "capacity_kwh": 250.0,
+   "power_kw": 125.0,
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "savings_usd": 5576.9869,
+   "pct_of_oracle": 16.2088
+  },
+  {
+   "building": "with_spikes",
+   "case": "Half-size battery",
+   "capacity_kwh": 250.0,
+   "power_kw": 125.0,
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "savings_usd": 25295.0921,
+   "pct_of_oracle": 76.1493
+  },
+  {
+   "building": "with_spikes",
+   "case": "Half-size battery",
+   "capacity_kwh": 250.0,
+   "power_kw": 125.0,
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "savings_usd": 9320.0264,
+   "pct_of_oracle": 27.0875
+  },
+  {
+   "building": "with_spikes",
    "case": "Base battery",
    "capacity_kwh": 500.0,
    "power_kw": 250.0,
@@ -9681,6 +11236,36 @@
   },
   {
    "building": "with_spikes",
+   "case": "Base battery",
+   "capacity_kwh": 500.0,
+   "power_kw": 250.0,
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "savings_usd": 12275.8729,
+   "pct_of_oracle": 23.5184
+  },
+  {
+   "building": "with_spikes",
+   "case": "Base battery",
+   "capacity_kwh": 500.0,
+   "power_kw": 250.0,
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "savings_usd": 32296.3991,
+   "pct_of_oracle": 64.3726
+  },
+  {
+   "building": "with_spikes",
+   "case": "Base battery",
+   "capacity_kwh": 500.0,
+   "power_kw": 250.0,
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "savings_usd": 17984.4249,
+   "pct_of_oracle": 34.4549
+  },
+  {
+   "building": "with_spikes",
    "case": "Double-size battery",
    "capacity_kwh": 1000.0,
    "power_kw": 500.0,
@@ -9858,6 +11443,36 @@
    "policy": "window",
    "savings_usd": 31996.5087,
    "pct_of_oracle": 46.8381
+  },
+  {
+   "building": "with_spikes",
+   "case": "Double-size battery",
+   "capacity_kwh": 1000.0,
+   "power_kw": 500.0,
+   "forecaster": "timestral-209m",
+   "policy": "threshold",
+   "savings_usd": 19784.5088,
+   "pct_of_oracle": 28.9616
+  },
+  {
+   "building": "with_spikes",
+   "case": "Double-size battery",
+   "capacity_kwh": 1000.0,
+   "power_kw": 500.0,
+   "forecaster": "timestral-209m",
+   "policy": "ratchet",
+   "savings_usd": 43412.2317,
+   "pct_of_oracle": 66.6511
+  },
+  {
+   "building": "with_spikes",
+   "case": "Double-size battery",
+   "capacity_kwh": 1000.0,
+   "power_kw": 500.0,
+   "forecaster": "timestral-209m",
+   "policy": "window",
+   "savings_usd": 33851.7909,
+   "pct_of_oracle": 49.5539
   }
  ]
 }

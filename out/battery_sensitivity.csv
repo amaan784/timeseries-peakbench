@@ -17,6 +17,9 @@ with_spikes,Half-size battery,250.0,125.0,timesfm-3.0,window,9523.3269,27.6784
 with_spikes,Half-size battery,250.0,125.0,timesfm-2.5,threshold,5788.977,16.825
 with_spikes,Half-size battery,250.0,125.0,timesfm-2.5,ratchet,26442.0719,79.6022
 with_spikes,Half-size battery,250.0,125.0,timesfm-2.5,window,8896.4016,25.8563
+with_spikes,Half-size battery,250.0,125.0,timestral-209m,threshold,5576.9869,16.2088
+with_spikes,Half-size battery,250.0,125.0,timestral-209m,ratchet,25295.0921,76.1493
+with_spikes,Half-size battery,250.0,125.0,timestral-209m,window,9320.0264,27.0875
 with_spikes,Base battery,500.0,250.0,oracle,threshold,52196.9718,100.0
 with_spikes,Base battery,500.0,250.0,oracle,ratchet,50171.0083,100.0
 with_spikes,Base battery,500.0,250.0,oracle,window,52196.9718,100.0
@@ -35,6 +38,9 @@ with_spikes,Base battery,500.0,250.0,timesfm-3.0,window,18031.6577,34.5454
 with_spikes,Base battery,500.0,250.0,timesfm-2.5,threshold,10902.6223,20.8875
 with_spikes,Base battery,500.0,250.0,timesfm-2.5,ratchet,33862.8982,67.495
 with_spikes,Base battery,500.0,250.0,timesfm-2.5,window,16561.5585,31.729
+with_spikes,Base battery,500.0,250.0,timestral-209m,threshold,12275.8729,23.5184
+with_spikes,Base battery,500.0,250.0,timestral-209m,ratchet,32296.3991,64.3726
+with_spikes,Base battery,500.0,250.0,timestral-209m,window,17984.4249,34.4549
 with_spikes,Double-size battery,1000.0,500.0,oracle,threshold,68313.0122,100.0
 with_spikes,Double-size battery,1000.0,500.0,oracle,ratchet,65133.5556,100.0
 with_spikes,Double-size battery,1000.0,500.0,oracle,window,68313.0122,100.0
@@ -53,3 +59,6 @@ with_spikes,Double-size battery,1000.0,500.0,timesfm-3.0,window,33733.6974,49.38
 with_spikes,Double-size battery,1000.0,500.0,timesfm-2.5,threshold,19306.4583,28.2618
 with_spikes,Double-size battery,1000.0,500.0,timesfm-2.5,ratchet,43728.2135,67.1362
 with_spikes,Double-size battery,1000.0,500.0,timesfm-2.5,window,31996.5087,46.8381
+with_spikes,Double-size battery,1000.0,500.0,timestral-209m,threshold,19784.5088,28.9616
+with_spikes,Double-size battery,1000.0,500.0,timestral-209m,ratchet,43412.2317,66.6511
+with_spikes,Double-size battery,1000.0,500.0,timestral-209m,window,33851.7909,49.5539
