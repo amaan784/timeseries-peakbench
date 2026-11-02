@@ -475,5 +475,6 @@ html(
     """<div class="foot">Forecasts are day-ahead: each sees only data up to the midnight before the day it predicts
     (enforced in <code>tests/test_forecast.py</code>). The TimesFM and Timestral forecasts are served from the committed
     cache in <code>out/cache/</code>. Not modelled: battery degradation, grid-services revenue, tariff ratchets, multiple meters.
-    Method and limitations are in the README.</div>"""
+    Method and limitations are in
+    <a href="https://github.com/amaan784/timeseries-peakbench/blob/main/docs/method.md">docs/method.md</a>.</div>"""
 )

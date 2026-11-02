@@ -1,10 +1,10 @@
-"""Build the standalone HTML report (and refresh the README results).
+"""Build the standalone HTML report (and refresh the generated results).
 
     python -m src.report
 
-Writes out/report.html, a copy at docs/index.html for GitHub Pages, and the
-generated section of README.md. Only reads what src/evaluate.py wrote, so
-every number here comes from the last run.
+Writes out/report.html, a copy at docs/index.html for GitHub Pages, the short
+results summary in README.md and the full tables in docs/results.md. Only
+reads what src/evaluate.py wrote, so every number here comes from the last run.
 """
 
 from __future__ import annotations
@@ -24,8 +24,9 @@ from .forecast import FM_MODELS
 
 POLICY_ORDER = ("ratchet", "threshold", "window")
 BATTERY_CASES = ("Half-size battery", "Base battery", "Double-size battery")
-README_START = "<!-- results:start -->"
-README_END = "<!-- results:end -->"
+# generated text goes between these two comments in README.md and docs/results.md
+RESULTS_START = "<!-- results:start -->"
+RESULTS_END = "<!-- results:end -->"
 
 
 def _fig(builder, *args, **kw) -> dict:
@@ -658,6 +659,8 @@ def _load_real(c: dict) -> dict | None:
             f"lower peak error on {_count(k['beat'])}, more {pl['ratchet'].lower()} savings on {_count(k['more'])} "
             f"({money(min(k['usd']), signed=True)} to {money(max(k['usd']), signed=True)} a year per building)."
         )
+    r["top"] = top
+    r["window_losses"] = losses
     return r
 
 
@@ -861,7 +864,8 @@ def build() -> tuple[str, dict]:
     c["real"] = real
     c.update(title=title, findings=findings, fm_lines=fm_lines, timegpt_note=timegpt_note,
              fm_heading=_fm_heading(c), rob=rob, rob_heading=_robustness_heading(c, rob),
-             spread_cases=spread_cases, spread_note=spread_note)
+             spread_cases=spread_cases, spread_note=spread_note,
+             timing_window=timing_window, timing_closed=timing_closed)
     return page, c
 
 
@@ -881,8 +885,91 @@ def _md_row(cells: list) -> str:
     return "| " + " | ".join(cells) + " |"
 
 
-def readme_block(c: dict) -> str:
-    """The generated results section of the README."""
+def _best_policy(pct: pd.DataFrame) -> str:
+    # the policy with the highest average share of perfect-foresight savings
+    return pct[list(POLICY_ORDER)].mean().idxmax()
+
+
+def summary_block(c: dict) -> str:
+    """The short results summary at the top of the README."""
+    labels, pl, pct, A, fc = c["labels"], c["pl"], c["pct"], c["A"], c["fc"]
+    policy_spread, forecaster_spread = c["policy_spread"], c["forecaster_spread"]
+    out = [f"**{_md(c['title'])}**", ""]
+
+    # share of perfect-foresight savings per policy, with and without the spikes
+    cases = [(c["res"]["buildings"][c["main"]]["label"], pct)]
+    if c["other"] is not None:
+        cases.append((c["res"]["buildings"][c["other"]]["label"], c["pct_o"]))
+    header = ["Policy"]
+    for name, _ in cases:
+        header.append(name)
+    out += [_md_row(header), "|---|" + "---:|" * len(cases)]
+    for p in POLICY_ORDER:
+        cells = [pl[p]]
+        for _, table in cases:
+            cells.append(_range(table[p]))
+        out.append(_md_row(cells))
+    where = "synthetic building" if c["meta"]["synthetic"] else H.escape(c["meta"]["label"])
+    out += ["", f"Share of perfect-foresight savings each policy captured, across the {_count(len(c['real_names']))} "
+            f"forecasters ({where}, one year at 15-minute resolution).", ""]
+
+    if policy_spread >= forecaster_spread:
+        lead = "Policy beats forecaster."
+    else:
+        lead = "Here the forecaster beats the policy."
+    out.append(f"- **{lead}** With the forecaster fixed ({labels[fc]}), the three policies are {money(policy_spread)} a "
+               f"year apart; with the policy fixed, the forecasters are {money(forecaster_spread)} apart "
+               f"({policy_spread / forecaster_spread:.1f}x).")
+
+    worst = pct[list(POLICY_ORDER)].mean().idxmin()
+    best = _best_policy(pct)
+    lead = "The obvious policy is the worst one." if worst == "threshold" else f"{pl[worst]} is the worst policy."
+    out.append(f"- **{lead}** {pl[worst]} captures {_range(pct[worst])} of perfect-foresight savings; "
+               f"{pl[best].lower()} captures {_range(pct[best])}.")
+
+    window_at_0 = float(c["sw"][(c["sw"].forecaster == "oracle") & (c["sw"].policy == "window")
+                                & (c["sw"].shift_minutes == 0)].savings_usd.iloc[0])
+    closed = "don't move" if c["timing_closed"] < 50 else f"move by {money(c['timing_closed'])}"
+    out.append(f"- **Timing error breaks schedules.** A perfect forecast 30 minutes late costs the window policy "
+               f"{money(c['timing_window'])} a year ({100 * c['timing_window'] / window_at_0:.0f}% of its savings); the "
+               f"meter-driven policies {closed}.")
+
+    if c["other"] is not None:
+        best_o = _best_policy(c["pct_o"])
+        if best_o != best:
+            out.append(f"- **No policy wins everywhere.** Without the equipment spikes, {pl[best_o].lower()} comes out on "
+                       f"top ({_range(c['pct_o'][best_o])}) and {pl[best].lower()} drops to {_range(c['pct_o'][best])}.")
+        else:
+            out.append(f"- **The ranking holds without the spikes:** {pl[best].lower()} still captures the most "
+                       f"({_range(c['pct_o'][best])}).")
+
+    r = c.get("real")
+    if r:
+        top = r["top"]
+        out.append(f"- **Real meters.** On {_count(r['n'])} metered buildings (UCI, Portugal, 2014), {pl[top].lower()} was "
+                   f"the best policy on {_count(r['win_counts'][top])} of {_count(r['n'])}, the policy spread beat the "
+                   f"forecaster spread on {_count(r['policy_beats_fc'])} of {_count(r['n'])}, and a perfect forecast 30 "
+                   f"minutes off cost the window schedule {_range(r['window_losses'])} of its savings.")
+
+    if c["fms"]:
+        names = []
+        for f in c["fms"]:
+            names.append(_short(labels[f]))
+        most_accurate = A.loc[c["real_names"], "business_day_mape_pct"].idxmin()
+        delta = c["sav"].loc[most_accurate, "ratchet"] - c["sav"].loc["ridge", "ratchet"]
+        out.append(f"- **Better forecasts, little money.** The foundation models ({_and(names)}) moved annual savings by "
+                   f"at most {money(_fm_moves(c))} against ridge. The most accurate forecaster by MAPE, "
+                   f"{_short(labels[most_accurate])} ({A.loc[most_accurate, 'business_day_mape_pct']:.1f}% vs "
+                   f"{A.loc['ridge', 'business_day_mape_pct']:.1f}% for ridge), changed {pl['ratchet'].lower()} savings by "
+                   f"{money(delta, signed=True)} a year.")
+
+    out += ["", "Every table, the real-meter breakdown and what the numbers mean: [docs/results.md](docs/results.md).", "",
+            "<sub>Generated by `make report` from `out/results.json`. Edit the code, not these numbers.</sub>"]
+    return "\n".join(out)
+
+
+def results_block(c: dict) -> str:
+    """The full generated results in docs/results.md."""
     labels, pl, pct, sav, empty, A, S, meta = c["labels"], c["pl"], c["pct"], c["sav"], c["empty"], c["A"], c["S"], c["meta"]
     bat, tar, hb = c["bat"], c["tar"], c["hb"]
     oracle = S[S.forecaster == "oracle"].set_index("policy").savings_usd
@@ -989,17 +1076,16 @@ def readme_block(c: dict) -> str:
     return "\n".join(out)
 
 
-def update_readme(c: dict) -> bool:
-    # swap in the new results between the two marker comments
-    path = config.ROOT / "README.md"
+def fill_markers(path, block: str) -> bool:
+    # swap in new text between the two marker comments; False if the file or the markers are missing
     if not path.exists():
         return False
     text = path.read_text(encoding="utf-8")
-    if README_START not in text or README_END not in text:
+    if RESULTS_START not in text or RESULTS_END not in text:
         return False
-    before, rest = text.split(README_START, 1)
-    _, after = rest.split(README_END, 1)
-    path.write_text(f"{before}{README_START}\n{readme_block(c)}\n{README_END}{after}", encoding="utf-8")
+    before, rest = text.split(RESULTS_START, 1)
+    _, after = rest.split(RESULTS_END, 1)
+    path.write_text(f"{before}{RESULTS_START}\n{block}\n{RESULTS_END}{after}", encoding="utf-8")
     return True
 
 
@@ -1010,8 +1096,10 @@ def main() -> None:
     config.DOCS.mkdir(exist_ok=True)
     (config.DOCS / "index.html").write_text(page, encoding="utf-8")
     print(f"wrote {config.OUT / 'report.html'} and {config.DOCS / 'index.html'} ({len(page) / 1e6:.1f} MB)")
-    if update_readme(c):
-        print("refreshed the results section of README.md")
+    if fill_markers(config.ROOT / "README.md", summary_block(c)):
+        print("refreshed the results summary in README.md")
+    if fill_markers(config.DOCS / "results.md", results_block(c)):
+        print("refreshed the full results in docs/results.md")
 
 
 TEMPLATE = """<!doctype html>

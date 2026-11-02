@@ -21,7 +21,7 @@ uci:                ## re-download the UCI file and rebuild data/uci/ (250 MB do
 test:
 	$(PY) -m pytest -q
 
-report:             ## out/report.html + docs/index.html, and refresh the README results section
+report:             ## out/report.html + docs/index.html, and refresh the results in README.md and docs/results.md
 	$(PY) -m src.report
 
 app:                ## the Streamlit dashboard
