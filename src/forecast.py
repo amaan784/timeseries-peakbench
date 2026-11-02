@@ -8,7 +8,7 @@ where history has to stop before midnight of the target day (we pretend the
 forecast is made the evening before). check_history() enforces that and
 tests/test_forecast.py checks nothing leaks.
 
-The foundation models (TimesFM, TimeGPT) live in foundation.py and plug into
+The foundation models (TimesFM, Timestral, TimeGPT) live in foundation.py and plug into
 the same day-ahead runner.
 """
 
@@ -150,11 +150,12 @@ LABELS = {
     "ridge": "Ridge",
     "timesfm-3.0": "TimesFM 3.0 (zero-shot)",
     "timesfm-2.5": "TimesFM 2.5 (zero-shot)",
+    "timestral-209m": "Timestral 209M (zero-shot)",
     "timegpt": "TimeGPT (zero-shot)",
 }
 
 
-FM_MODELS = ("timesfm-3.0", "timesfm-2.5", "timegpt")
+FM_MODELS = ("timesfm-3.0", "timesfm-2.5", "timestral-209m", "timegpt")
 
 
 def build_forecasters(load: pd.Series, include_fm: bool = True, fm_models=FM_MODELS) -> dict[str, Forecaster]:
@@ -167,12 +168,14 @@ def build_forecasters(load: pd.Series, include_fm: bool = True, fm_models=FM_MOD
     if not include_fm:
         return fcs
     # imported here rather than at the top because foundation.py imports this module
-    from .foundation import TimeGPTZeroShot, TimesFMZeroShot
+    from .foundation import TimeGPTZeroShot, TimesFMZeroShot, TimestralZeroShot
 
     if "timesfm-3.0" in fm_models:
         fcs["timesfm-3.0"] = TimesFMZeroShot("3.0")
     if "timesfm-2.5" in fm_models:
         fcs["timesfm-2.5"] = TimesFMZeroShot("2.5")
+    if "timestral-209m" in fm_models:
+        fcs["timestral-209m"] = TimestralZeroShot("209M")
     if "timegpt" in fm_models:
         fcs["timegpt"] = TimeGPTZeroShot()
     return fcs

@@ -1,7 +1,7 @@
 """Run every forecaster x policy combination and write the results.
 
     python -m src.evaluate            # foundation models come from the cache
-    python -m src.evaluate --no-fm    # skip TimesFM / TimeGPT
+    python -m src.evaluate --no-fm    # skip TimesFM / Timestral / TimeGPT
 
 Writes out/results.json plus tidy CSVs. The dashboard, report and README all
 read from these, so no number is typed in by hand anywhere downstream.
@@ -118,7 +118,7 @@ def experiments(include_fm: bool = True) -> dict[str, Experiment]:
 
 def load_saved(building: str) -> Experiment:
     # What the dashboard uses: actual load + all forecasts from the last run.
-    # Means the app starts instantly and doesn't need TimesFM or a Nixtla key.
+    # Means the app starts instantly and doesn't need torch or a Nixtla key.
     results = config.OUT / "results.json"
     main = None
     if results.exists():
@@ -511,7 +511,7 @@ def run(include_fm: bool = True, battery: Battery | None = None, tariff: Tariff 
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--no-fm", action="store_true", help="skip TimesFM and TimeGPT")
+    p.add_argument("--no-fm", action="store_true", help="skip TimesFM, Timestral and TimeGPT")
     args = p.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     res = run(include_fm=not args.no_fm)

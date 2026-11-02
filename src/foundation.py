@@ -1,6 +1,7 @@
-"""Foundation-model forecasters: TimesFM (local, on CPU) and TimeGPT (Nixtla's API).
+"""Foundation-model forecasters: TimesFM and Timestral (local, on CPU) and
+TimeGPT (Nixtla's API).
 
-Both are zero-shot: 28 days of history in, one day (96 steps) out. They use the
+All are zero-shot: 28 days of history in, one day (96 steps) out. They use the
 same signature as the forecasters in forecast.py, and also have forecast_days(),
 which runs a whole year in batches and caches every (model, date) under
 out/cache/, so reruns are instant and nothing needs the checkpoint or a key.
@@ -217,6 +218,63 @@ class TimesFMZeroShot(ZeroShotForecaster):
         return frames
 
 
+class TimestralZeroShot(ZeroShotForecaster):
+    """Mistral's Timestral, run locally on CPU. Same 28 days in, 96 steps out.
+
+    pip install git+https://github.com/mistralai/timestral.git. First run
+    downloads the checkpoint from Hugging Face (837 MB for 209M, 111 MB for
+    28M). The weights are under Mistral's modified MIT licence.
+    """
+
+    SIZES = ("5M", "28M", "123M", "209M")
+
+    def __init__(self, size: str = "209M", **kw):
+        super().__init__(**kw)
+        if size not in self.SIZES:
+            raise ValueError(f"Timestral comes in {', '.join(self.SIZES)}, not {size}")
+        self.size = size
+        self.name = f"timestral-{size.lower()}"
+        self._model = None
+
+    def _load(self):
+        if self._model is not None:
+            return self._model
+        try:
+            import torch
+            from timestral import TimestralForecaster
+        except ImportError:
+            log.warning("timestral: package not installed; run "
+                        "`pip install git+https://github.com/mistralai/timestral.git`")
+            return None
+        torch.set_num_threads(os.cpu_count() or 4)
+        self._model = TimestralForecaster.from_pretrained(f"mistralai/Timestral-{self.size}", device="cpu")
+        return self._model
+
+    def _predict(self, contexts, days):
+        model = self._load()
+        if model is None:
+            return None
+        # one (days, steps) array; a shorter context is padded on the left with
+        # NaN, which Timestral reads as missing
+        longest = 0
+        for c in contexts:
+            longest = max(longest, len(c))
+        batch = np.full((len(contexts), longest), np.nan, dtype=np.float32)
+        for i, c in enumerate(contexts):
+            batch[i, longest - len(c) :] = c.to_numpy(dtype=np.float32)
+
+        fc = model.forecast(batch, prediction_length=INTERVALS_PER_DAY)
+        # outputs are (days, variates, steps) tensors; there's one variate
+        median = np.asarray(fc.median)[:, 0]
+        q10 = np.asarray(fc.quantile(0.1))[:, 0]
+        q90 = np.asarray(fc.quantile(0.9))[:, 0]
+
+        frames = []
+        for i, d in enumerate(days):
+            frames.append(pd.DataFrame({"kw": median[i], "q10": q10[i], "q90": q90[i]}, index=target_index_for(d)))
+        return frames
+
+
 class TimeGPTZeroShot(ZeroShotForecaster):
     """Nixtla's TimeGPT through their API. Same 28 days in, 96 steps out.
 
@@ -298,6 +356,16 @@ def timesfm_zeroshot(history: pd.Series, target_index: pd.DatetimeIndex, version
     key = f"timesfm-{version}"
     if key not in _FM_INSTANCES:
         _FM_INSTANCES[key] = TimesFMZeroShot(version)
+    model = _FM_INSTANCES[key]
+    if model.fingerprint is None:
+        model.fingerprint = fingerprint(history)
+    return model(history, target_index)
+
+
+def timestral_zeroshot(history: pd.Series, target_index: pd.DatetimeIndex, size: str = "209M") -> pd.Series:
+    key = f"timestral-{size.lower()}"
+    if key not in _FM_INSTANCES:
+        _FM_INSTANCES[key] = TimestralZeroShot(size)
     model = _FM_INSTANCES[key]
     if model.fingerprint is None:
         model.fingerprint = fingerprint(history)

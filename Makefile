@@ -6,7 +6,7 @@ PY ?= python
 install:            ## core dependencies (no torch: foundation-model forecasts come from out/cache)
 	$(PY) -m pip install -r requirements.txt
 
-install-fm:         ## TimesFM (CPU torch) + Nixtla client, only needed to regenerate the cache
+install-fm:         ## TimesFM + Timestral (CPU torch) + Nixtla client, only needed to regenerate the cache
 	$(PY) -m pip install -r requirements-fm.txt
 
 run:                ## evaluate every forecaster x policy; writes out/results.json + CSVs (< 60 s on CPU)

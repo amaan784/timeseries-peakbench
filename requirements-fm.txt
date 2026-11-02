@@ -1,6 +1,9 @@
 # Optional: only needed to regenerate the cached foundation-model forecasts in out/cache/.
-# TimesFM runs locally on CPU (first run downloads the checkpoint from Hugging Face:
-# ~1.3 GB for 3.0, ~0.9 GB for 2.5). TimeGPT calls Nixtla's API and needs NIXTLA_API_KEY.
+# TimesFM and Timestral run locally on CPU (first run downloads the checkpoints from
+# Hugging Face: ~1.3 GB for TimesFM 3.0, ~0.9 GB for 2.5, 837 MB for Timestral 209M).
+# TimeGPT calls Nixtla's API and needs NIXTLA_API_KEY.
 -r requirements.txt
 timesfm[torch]>=3.0.2
+# Timestral isn't on PyPI yet; pinned to the commit the cache was made with
+timestral @ git+https://github.com/mistralai/timestral.git@a534bdbd244d64f3d9d743f46c7bf6fc330ed4ff
 nixtla>=0.9.0
