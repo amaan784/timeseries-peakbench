@@ -20,7 +20,7 @@ C&I customers in Massachusetts pay a demand charge on the single highest 15-minu
 1. **Building:** a synthetic Boston-area office, 15-minute kW for 2025 plus a warm-up, with a weekday occupancy ramp, light weekends and holidays, a summer cooling season that sets the annual peak, day-level weather noise, and short random equipment spikes on weekdays (`src/data.py`). Then the same experiment on six real meters (`src/uci.py`, `src/real_meters.py`).
 2. **Tariff:** illustrative Massachusetts-style time-of-use rate with a monthly demand charge on the highest 15-minute interval (`src/tariff.py`).
 3. **Battery:** a 2-hour C&I battery with round-trip losses split evenly across charge and discharge, state-of-charge limits, off-peak-only charging that never raises net load above the day's target (`src/dispatch.py`).
-4. **Forecasters:** seasonal naive, 28-day profile, ridge (calendar features + 1/2/7-day lags), TimesFM 3.0 and 2.5 zero-shot on CPU, TimeGPT zero-shot via API, and a perfect-foresight oracle as the ceiling. All are day-ahead: each sees only data up to the midnight before (`src/forecast.py`, foundation models in `src/foundation.py`).
+4. **Forecasters:** seasonal naive, 28-day profile, ridge (calendar features + 1/2/7-day lags), TimesFM 3.0 and 2.5 and Mistral's Timestral 209M zero-shot on CPU, TimeGPT zero-shot via API, and a perfect-foresight oracle as the ceiling. All are day-ahead: each sees only data up to the midnight before (`src/forecast.py`, foundation models in `src/foundation.py`).
 5. **Policies:** all three get the same forecast and the same daily kW target. **Window** discharges on the forecast's schedule and ignores the meter. **Threshold** discharges whenever the meter crosses the target. **Threshold + ratchet** does the same but never spends energy shaving below a peak already set this month. With a perfect forecast, window and threshold are identical, so any gap between them comes from how each handles error.
 
 ## Results
@@ -28,13 +28,13 @@ C&I customers in Massachusetts pay a demand charge on the single highest 15-minu
 <!-- results:start -->
 **Choosing the dispatch policy is worth $20k a year. Choosing the forecaster is worth $2.8k.**
 
-1. **Policy beats forecaster.** Holding the forecaster fixed (Ridge), the three dispatch policies are $20k a year apart. Holding the policy fixed (threshold + ratchet), the five forecasters are $2.8k apart. In every case the spread across policies exceeds the spread across forecasters, by 2.3x to 6.5x.
-2. **The obvious threshold policy is the worst one.** Setting each day's target as low as the forecast says the battery can hold captures only 16-22% of perfect-foresight savings. It spends the whole battery on the forecast's peak, so when the real peak is higher the battery is empty before it arrives: it ran out with the meter still above target on 47-72% of business days (the ratchet: 5-7%).
+1. **Policy beats forecaster.** Holding the forecaster fixed (Ridge), the three dispatch policies are $20k a year apart. Holding the policy fixed (threshold + ratchet), the six forecasters are $2.8k apart. In every case the spread across policies exceeds the spread across forecasters, by 2.3x to 5.3x.
+2. **The obvious threshold policy is the worst one.** Setting each day's target as low as the forecast says the battery can hold captures only 16-24% of perfect-foresight savings. It spends the whole battery on the forecast's peak, so when the real peak is higher the battery is empty before it arrives: it ran out with the meter still above target on 47-72% of business days (the ratchet: 5-7%).
 3. **Reading the meter only pays if the policy respects the bill.** Adding one rule (never shave below a peak already set this month) lifts the same closed-loop policy to 62-67%, against 32-35% for a forecast-scheduled window.
 4. **Timing error is what kills schedules.** A perfect forecast running 30 minutes late costs the window policy $38k a year; the meter-driven policies don't move.
-5. **But no policy wins everywhere.** Remove the short equipment spikes from the same building and the ranking flips: the window schedule captures 67-77%, the ratchet 43-54%. Spikes are what a forecast can't place and a meter can catch; on a smooth load, the risk is under-forecasting the level, and a schedule bounded by its plan degrades more gently.
-6. **Real meters back this up.** On metered 15-minute data from six buildings in Portugal (UCI, 2014, picked by a fixed rule), threshold + ratchet was the best policy on six of six with the Ridge forecast, capturing 47-93% of the best perfect-foresight savings. A perfect forecast 30 minutes off cost the window schedule 35-70% of its savings. Real loads are harder to forecast (Ridge MAPE 7-21% on business days). TimesFM 3.0 had the lower MAPE on six of six, but beat ridge on peak error on only two, and moved threshold + ratchet savings by -$1.5k to +$1.2k a year per building.
-7. **Foundation models did not change the answer.** On the synthetic building, neither foundation model beat ridge on day-ahead peak error (71 and 66 vs 65 kW mean absolute error), despite a better average MAPE. Under threshold + ratchet they moved annual savings by +$893 (TimesFM 3.0), +$2.8k (TimesFM 2.5), against $20k between policies. TimeGPT is implemented (`timegpt_zeroshot()`) but did not run for this report: no `NIXTLA_API_KEY` was available, so it is left out of every comparison rather than estimated.
+5. **But no policy wins everywhere.** Remove the short equipment spikes from the same building and the ranking flips: the window schedule captures 67-79%, the ratchet 43-54%. Spikes are what a forecast can't place and a meter can catch; on a smooth load, the risk is under-forecasting the level, and a schedule bounded by its plan degrades more gently.
+6. **Real meters back this up.** On metered 15-minute data from six buildings in Portugal (UCI, 2014, picked by a fixed rule), threshold + ratchet was the best policy on six of six with the Ridge forecast, capturing 47-93% of the best perfect-foresight savings. A perfect forecast 30 minutes off cost the window schedule 35-70% of its savings. Real loads are harder to forecast (Ridge MAPE 7-21% on business days). TimesFM 3.0 vs ridge: lower MAPE on six of six buildings, lower peak error on two, more threshold + ratchet savings on three (-$1.5k to +$1.2k a year per building). Timestral 209M vs ridge: lower MAPE on six of six buildings, lower peak error on five, more threshold + ratchet savings on three (-$1.3k to +$1.7k a year per building).
+7. **Foundation models did not change the answer.** On the synthetic building, Timestral 209M beat ridge on day-ahead peak error; the others did not (mean absolute error: TimesFM 3.0 71 kW, TimesFM 2.5 66 kW, Timestral 209M 62 kW, ridge 65 kW). Under threshold + ratchet they moved annual savings by +$893 (TimesFM 3.0), +$2.8k (TimesFM 2.5), +$1.3k (Timestral 209M), against $20k between policies. TimeGPT is implemented (`timegpt_zeroshot()`) but did not run for this report: no `NIXTLA_API_KEY` was available, so it is left out of every comparison rather than estimated.
 
 #### Annual savings by forecaster and policy (with equipment spikes, the main case)
 
@@ -48,6 +48,7 @@ Each cell: savings vs the no-battery bill, and the share of perfect-foresight sa
 | Ridge | $31,024 (62%) | $11,314 (22%) | $18,046 (35%) | 65 kW | 5.7% |
 | TimesFM 3.0 (zero-shot) | $31,917 (64%) | $8,271 (16%) | $18,032 (35%) | 71 kW | 4.7% |
 | TimesFM 2.5 (zero-shot) | $33,863 (67%) | $10,903 (21%) | $16,562 (32%) | 66 kW | 4.7% |
+| Timestral 209M (zero-shot) | $32,296 (64%) | $12,276 (24%) | $17,984 (34%) | 62 kW | 4.0% |
 
 Bill without a battery: $579,413 a year. Battery 500 kWh / 250 kW, 88% round trip. Demand charge $22.00/kW-month. Business days a meter-driven policy ran out of energy with the meter still above its target: threshold 47-72%; threshold + ratchet 5-7%.
 
@@ -60,6 +61,7 @@ Bill without a battery: $579,413 a year. Battery 500 kWh / 250 kW, 88% round tri
 | Ridge | $10,795 (47%) | $4,926 (20%) | $19,144 (76%) |
 | TimesFM 3.0 (zero-shot) | $12,544 (54%) | $5,725 (23%) | $19,469 (77%) |
 | TimesFM 2.5 (zero-shot) | $11,735 (51%) | $6,203 (25%) | $19,402 (77%) |
+| Timestral 209M (zero-shot) | $11,988 (52%) | $5,945 (24%) | $19,784 (79%) |
 
 #### Timing error: a perfect-shape forecast shifted in time (annual savings)
 
@@ -71,29 +73,30 @@ Bill without a battery: $579,413 a year. Battery 500 kWh / 250 kW, 88% round tri
 
 #### Foundation models vs ridge (synthetic building)
 
-**Better average accuracy did not buy better peaks, and the dollars moved by at most $3.0k, against $20k for the choice of policy.**
+**Better average accuracy did not reliably buy better peaks, and the dollars moved by at most $3.0k, against $20k for the choice of policy.**
 
 - **TimesFM 3.0 (zero-shot)** did not beat ridge on day-ahead peak error (71 vs 65 kW mean absolute error; its peaks run 66 kW low on average), while its business-day MAPE was better (4.7% vs 5.7%). Dollars vs ridge: +$893 under threshold + ratchet, -$3.0k under threshold, -$14 under window.
 - **TimesFM 2.5 (zero-shot)** did not beat ridge on day-ahead peak error (66 vs 65 kW mean absolute error; its peaks run 58 kW low on average), while its business-day MAPE was better (4.7% vs 5.7%). Dollars vs ridge: +$2.8k under threshold + ratchet, -$411 under threshold, -$1.5k under window.
+- **Timestral 209M (zero-shot)** beat ridge on day-ahead peak error (62 vs 65 kW mean absolute error; its peaks run 56 kW low on average), and its business-day MAPE was better too (4.0% vs 5.7%). Dollars vs ridge: +$1.3k under threshold + ratchet, +$962 under threshold, -$61 under window.
 - TimeGPT is implemented (`timegpt_zeroshot()`) but did not run for this report: no `NIXTLA_API_KEY` was available, so it is left out of every comparison rather than estimated.
 
 #### Battery size shifts the numbers, not the ranking. The building's load shape changes the ranking.
 
 | Case | Threshold + ratchet | Threshold | Window |
 |---|---:|---:|---:|
-| Half-size battery (250 kWh / 125 kW) | 78-80% | 14-25% | 21-28% |
-| Base battery (500 kWh / 250 kW) | 62-67% | 16-22% | 32-35% |
+| Half-size battery (250 kWh / 125 kW) | 76-80% | 14-25% | 21-28% |
+| Base battery (500 kWh / 250 kW) | 62-67% | 16-24% | 32-35% |
 | Double-size battery (1,000 kWh / 500 kW) | 57-68% | 25-32% | 47-50% |
-| Smooth (no equipment spikes), base battery | 43-54% | 20-25% | 67-77% |
+| Smooth (no equipment spikes), base battery | 43-54% | 20-25% | 67-79% |
 
-**Does the policy still matter more than the forecaster?** In every case the spread across policies exceeds the spread across forecasters, by 2.3x to 6.5x. The two best policies come closer than that, and in one case (double-size battery, with equipment spikes) closer to each other than the best and worst forecasters are.
+**Does the policy still matter more than the forecaster?** In every case the spread across policies exceeds the spread across forecasters, by 2.3x to 5.3x. The two best policies come closer than that, and in one case (double-size battery, with equipment spikes) closer to each other than the best and worst forecasters are.
 
 | Case | Spread across policies | Best vs second-best policy | Spread across forecasters | Ratio |
 |---|---:|---:|---:|---:|
-| Half-size battery, with equipment spikes | $19,203 | $16,360 | $3,643 | 5.3x |
-| Base battery, with equipment spikes | $19,710 | $12,978 | $3,043 | 6.5x |
+| Half-size battery, with equipment spikes | $19,203 | $15,975 | $3,643 | 5.3x |
+| Base battery, with equipment spikes | $19,710 | $12,978 | $4,005 | 4.9x |
 | Double-size battery, with equipment spikes | $15,227 | $3,874 | $6,761 | 2.3x |
-| Base battery, smooth (no equipment spikes) | $11,916 | $6,878 | $2,615 | 4.6x |
+| Base battery, smooth (no equipment spikes) | $11,916 | $6,878 | $2,930 | 4.1x |
 
 Annual savings. Policy columns: the smallest gap over all forecasters. Forecaster column: the largest gap over all policies.
 
@@ -103,16 +106,16 @@ Annual savings. Policy columns: the smallest gap over all forecasters. Forecaste
 
 From UCI's ElectricityLoadDiagrams20112014 (CC BY 4.0), picked by the fixed rule in `src/uci.py`. Battery sized at 30% of each building's 2013 peak, two hours of storage. Policy columns are savings as a share of the best perfect-foresight result across the three policies, with the Ridge forecast.
 
-| Building | 2014 peak | Battery | MAPE | Threshold + ratchet | Threshold | Window | Policy spread | Forecaster spread | TimesFM 3.0 vs ridge, peak MAE |
+| Building | 2014 peak | Battery | MAPE | Threshold + ratchet | Threshold | Window | Policy spread | Forecaster spread | Peak MAE, kW: ridge / TimesFM 3.0 / Timestral 209M |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| MT_059 | 239 kW | 70 kW / 140 kWh | 12.0% | 72% | 6% | 10% | $5,909 | $835 | 19 vs 23 kW |
-| MT_061 | 159 kW | 55 kW / 110 kWh | 11.2% | 90% | 23% | 32% | $4,494 | $989 | 9 vs 9 kW |
-| MT_128 | 772 kW | 235 kW / 470 kWh | 16.8% | 47% | 19% | 39% | $10,802 | $8,383 | 70 vs 80 kW |
-| MT_151 | 289 kW | 85 kW / 170 kWh | 6.9% | 48% | 33% | 40% | $2,201 | $717 | 16 vs 15 kW |
-| MT_158 | 215 kW | 65 kW / 130 kWh | 21.0% | 93% | 26% | 29% | $5,996 | $1,460 | 16 vs 15 kW |
-| MT_164 | 262 kW | 80 kW / 160 kWh | 18.6% | 66% | 15% | 17% | $3,975 | $1,790 | 13 vs 12 kW |
+| MT_059 | 239 kW | 70 kW / 140 kWh | 12.0% | 72% | 6% | 10% | $5,909 | $1,098 | 23 / 19 / 17 |
+| MT_061 | 159 kW | 55 kW / 110 kWh | 11.2% | 90% | 23% | 32% | $4,494 | $1,375 | 9 / 9 / 8 |
+| MT_128 | 772 kW | 235 kW / 470 kWh | 16.8% | 47% | 19% | 39% | $10,802 | $8,383 | 80 / 70 / 70 |
+| MT_151 | 289 kW | 85 kW / 170 kWh | 6.9% | 48% | 33% | 40% | $2,201 | $916 | 15 / 16 / 14 |
+| MT_158 | 215 kW | 65 kW / 130 kWh | 21.0% | 93% | 26% | 29% | $5,996 | $1,460 | 15 / 16 / 16 |
+| MT_164 | 262 kW | 80 kW / 160 kWh | 18.6% | 66% | 15% | 17% | $3,975 | $1,790 | 12 / 13 / 11 |
 
-<sub>Generated by `make report` from `out/results.json` (2025-01-01 to 2025-12-31, evaluation runtime 10.3s). Edit the code, not these numbers.</sub>
+<sub>Generated by `make report` from `out/results.json` (2025-01-01 to 2025-12-31, evaluation runtime 13.4s). Edit the code, not these numbers.</sub>
 <!-- results:end -->
 
 ## What the numbers say
@@ -125,9 +128,9 @@ From UCI's ElectricityLoadDiagrams20112014 (CC BY 4.0), picked by the fixed rule
 
 **The timing finding, plainly.** If the battery discharges on a schedule, a forecast that has the shape exactly right but is 15 minutes off in time loses most of the value on this building, because the peaks that set the bill are 15 to 45 minutes long. If the battery discharges when the meter crosses a level, timing error costs nothing; only the forecast's magnitude reaches it. With real forecasts, which are already blurred in time, the window policy's problem is the spikes it can't place rather than the clock.
 
-**Average accuracy is the wrong yardstick.** The forecasters with the best business-day MAPE were not the ones with the best day-ahead peak error, and neither metric predicted the dollar ranking well. That held on real data too: TimesFM's lower MAPE did not reliably turn into better peaks or more money. What matters is the error on the few intervals that set each month's bill, and whether the policy survives being wrong about them.
+**Average accuracy is the wrong yardstick.** The forecasters with the best business-day MAPE were not reliably the ones with the best day-ahead peak error, and neither metric predicted the dollar ranking well. Timestral is the clearest case. It had the lowest MAPE of any forecaster on all eight datasets (two synthetic, six real) and beat ridge on peak error on most of them, yet it saved more than ridge on only half the real buildings, and on every dataset the money it moved was smaller than the gap between the best and worst policy. What matters is the error on the few intervals that set each month's bill, and whether the policy survives being wrong about them.
 
-**What would move the money next:** intraday re-forecasting (re-solving the target as the day unfolds), an energy reserve sized to each forecaster's recent peak error, and targets set from the upper quantiles of a probabilistic forecast. TimesFM already returns them; the 10th and 90th percentiles are saved in the cache.
+**What would move the money next:** intraday re-forecasting (re-solving the target as the day unfolds), an energy reserve sized to each forecaster's recent peak error, and targets set from the upper quantiles of a probabilistic forecast. TimesFM and Timestral already return them; the 10th and 90th percentiles are saved in the cache.
 
 ## Limitations
 
@@ -138,14 +141,14 @@ From UCI's ElectricityLoadDiagrams20112014 (CC BY 4.0), picked by the fixed rule
 - **Single meter, single battery,** no portfolio effects.
 - **Day-ahead only.** No intraday updates, which any production controller would add.
 - **TimeGPT** is implemented and tested but only runs with a `NIXTLA_API_KEY`. Without one it drops out of the comparison rather than being estimated (see the results section for whether it ran).
-- **TimesFM 3.0 weights** are licensed for non-commercial use only. TimesFM 2.5 weights are Apache-2.0, which is why both are here.
+- **TimesFM 3.0 weights** are licensed for non-commercial use only. TimesFM 2.5 weights are Apache-2.0, which is why both are here. **Timestral** weights are under Mistral's modified MIT licence (see the model card).
 
 ## Run it
 
 ```bash
 make install     # core deps; no torch needed, foundation-model forecasts come from out/cache
 make run         # evaluate everything -> out/results.json + tidy CSVs (~30 s on a laptop CPU)
-make real        # the same on the six real meters -> out/real/ (~30 s, TimesFM from cache)
+make real        # the same on the six real meters -> out/real/ (~30 s, foundation models from cache)
 make test        # pytest
 make report      # out/report.html, docs/index.html, and the README results above
 make app         # Streamlit dashboard
@@ -169,8 +172,10 @@ DATA_SOURCE = "data/my_building_15min.csv"
 
 **TimesFM** (`TimesFMZeroShot` / `timesfm_zeroshot()` in `src/foundation.py`) runs Google's checkpoint locally on CPU through the current `timesfm` package (3.0.x): `TimesFM3Forecaster.from_pretrained("google/timesfm-3.0-pytorch", device="cpu")`, then `predict_batch(contexts, horizon=96)` with a 28-day trailing context, batched 32 days at a time. Version 2.5 uses `TimesFM_2p5_200M_torch` with a compiled `ForecastConfig`. A year of day-ahead forecasts took about five minutes per model on an 8-core laptop CPU when the cache was built.
 
+**Timestral** (`TimestralZeroShot` / `timestral_zeroshot()`) runs Mistral's 209M checkpoint locally on CPU through the `timestral` package (from GitHub; not on PyPI yet, so `requirements-fm.txt` pins the commit): `TimestralForecaster.from_pretrained("mistralai/Timestral-209M", device="cpu")`, then `forecast(contexts, prediction_length=96)` on the same 28-day contexts, 32 days per batch. It returns 21 quantiles; the median is the forecast and the 10th and 90th percentiles go in the cache. The 5M, 28M and 123M sizes work too (`TimestralZeroShot("28M")`). A year took about three minutes per dataset on the same CPU.
+
 ```bash
-make install-fm   # pip install "timesfm[torch]" nixtla
+make install-fm   # pip install "timesfm[torch]", timestral (from GitHub), nixtla
 ```
 
 **TimeGPT** (`TimeGPTZeroShot` / `timegpt_zeroshot()`) uses Nixtla's client (`nixtla>=0.9`). It reads `NIXTLA_API_KEY` from the environment or a gitignored `.env` file and sends 32 days per request as separate series. The model is `timegpt-2.1` unless `TIMEGPT_MODEL` says otherwise. With no key it logs a message and serves only what is cached.
@@ -187,7 +192,7 @@ make install-fm   # pip install "timesfm[torch]" nixtla
 - power limit and no export to the grid
 - window and threshold give identical results with a perfect forecast
 - **no forecaster can see data at or after its target day**: the future gets overwritten with garbage and every forecast has to come out unchanged, including the batched foundation-model path
-- the forecast cache key, and TimeGPT skipping cleanly without a key
+- the forecast cache key, TimeGPT skipping cleanly without a key, and the Timestral wrapper (output shapes, NaN padding, skipping without the package) against a fake model
 - `bill()`: the demand charge is the month's highest interval times the rate
 
 ## Layout
@@ -197,7 +202,7 @@ src/
   config.py      data source switch, paths
   data.py        synthetic building + load_interval_csv()
   forecast.py    forecasters (oracle, seasonal naive, profile, ridge) and the day-ahead runner
-  foundation.py  TimesFM and TimeGPT, zero-shot, with the forecast cache
+  foundation.py  TimesFM, Timestral and TimeGPT, zero-shot, with the forecast cache
   tariff.py      Tariff dataclass and bill()
   dispatch.py    Battery, daily target bisection, simulate()
   evaluate.py    forecaster x policy x timing grid -> out/
