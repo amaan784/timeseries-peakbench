@@ -2,11 +2,11 @@
 
     python -m src.real_meters
 
-Same forecasters (TimesFM 3.0 is the only foundation model here; 2.5 would
-double the runtime and the synthetic run already compares the two), same
-three policies, same illustrative tariff, Portuguese holidays. Each battery
-is sized to its building: 30% of the 2013 peak in kW, two hours of storage,
-about the same ratio as the synthetic case. Sizing uses 2013 so nothing from
+Same forecasters (the foundation models here are TimesFM 3.0 and Timestral
+209M; TimesFM 2.5 would add runtime, and the synthetic run already compares
+the two TimesFM versions), same three policies, same illustrative tariff,
+Portuguese holidays. Each battery is sized to its building: 30% of the 2013
+peak in kW, two hours of storage, about the same ratio as the synthetic case. Sizing uses 2013 so nothing from
 the evaluated year (2014) leaks into it.
 
 Writes out/real/results.json plus tidy CSVs, one row group per building.
@@ -34,7 +34,7 @@ log = logging.getLogger("peakshave.real")
 OUT = config.OUT / "real"
 POWER_SHARE = 0.30  # battery kW as a share of the building's 2013 peak
 HOURS = 2.0  # kWh of storage per kW
-FM_MODELS = ("timesfm-3.0",)
+FM_MODELS = ("timesfm-3.0", "timestral-209m")
 
 
 def battery_for(peak_kw: float) -> Battery:
