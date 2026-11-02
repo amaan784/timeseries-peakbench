@@ -20,6 +20,7 @@ from plotly.offline import get_plotlyjs_version
 
 from . import charts, config
 from .charts import money, usd
+from .forecast import FM_MODELS
 
 POLICY_ORDER = ("ratchet", "threshold", "window")
 BATTERY_CASES = ("Half-size battery", "Base battery", "Double-size battery")
@@ -42,6 +43,13 @@ def _count(n: int) -> str:
     if n < len(words):
         return words[n]
     return str(n)
+
+
+def _and(items: list) -> str:
+    # "a", "a and b", "a, b and c"
+    if len(items) < 3:
+        return " and ".join(items)
+    return ", ".join(items[:-1]) + " and " + items[-1]
 
 
 def _range(values) -> str:
@@ -108,7 +116,7 @@ def _load_inputs() -> dict:
             c["real_names"].append(f)
     c["fms"] = []
     for f in c["real_names"]:
-        if f.startswith("timesfm") or f.startswith("timegpt"):
+        if f in FM_MODELS:
             c["fms"].append(f)
 
     # the spike-free twin, if there is one
@@ -143,18 +151,26 @@ def _fm_text(c: dict):
 
     lines = []
     for f in c["fms"]:
-        verdict = "beat" if A.loc[f, "peak_mae_kw"] < ridge_mae else "did not beat"
+        beat = A.loc[f, "peak_mae_kw"] < ridge_mae
+        verdict = "beat" if beat else "did not beat"
         bias = ""
         if A.loc[f, "peak_bias_kw"] < -20:
             bias = f"; its peaks run {abs(A.loc[f, 'peak_bias_kw']):.0f} kW low on average"
-        mape_word = "better" if A.loc[f, "business_day_mape_pct"] < ridge_mape else "worse"
+        mape_better = A.loc[f, "business_day_mape_pct"] < ridge_mape
+        mape_word = "better" if mape_better else "worse"
+        # "while" only when the two metrics disagree
+        if beat == mape_better:
+            link = "and"
+            mape_word += " too"
+        else:
+            link = "while"
         dollars = []
         for p in POLICY_ORDER:
             dollars.append(f"{money(sav.loc[f, p] - sav.loc['ridge', p], signed=True)} under {pl[p].lower()}")
         lines.append(
             f"<b>{H.escape(labels[f])}</b> {verdict} ridge on day-ahead peak error "
             f"({A.loc[f, 'peak_mae_kw']:.0f} vs {ridge_mae:.0f} kW mean absolute error{bias}), "
-            f"while its business-day MAPE was {mape_word} ({A.loc[f, 'business_day_mape_pct']:.1f}% vs {ridge_mape:.1f}%). "
+            f"{link} its business-day MAPE was {mape_word} ({A.loc[f, 'business_day_mape_pct']:.1f}% vs {ridge_mape:.1f}%). "
             f"Dollars vs ridge: {', '.join(dollars)}."
         )
 
@@ -225,27 +241,27 @@ def _findings(c: dict, timing_window: float, timing_closed: float, fm_lines: lis
 
         two = len(c["fms"]) == 2
         if not beat:
-            lead = ("Neither foundation model" if two else "No foundation model") + " beat ridge on day-ahead peak error"
+            lead = ("neither foundation model" if two else "no foundation model") + " beat ridge on day-ahead peak error"
         elif len(beat) == len(c["fms"]):
-            lead = ("Both foundation models" if two else "Every foundation model") + " beat ridge on day-ahead peak error"
+            lead = ("both foundation models" if two else "every foundation model") + " beat ridge on day-ahead peak error"
         else:
             names = []
             for f in beat:
                 names.append(_short(labels[f]))
-            lead = " and ".join(names) + " beat ridge on day-ahead peak error; the others did not"
+            others = "the other did not" if len(c["fms"]) - len(beat) == 1 else "the others did not"
+            lead = _and(names) + " beat ridge on day-ahead peak error; " + others
 
         maes, deltas = [], []
         for f in c["fms"]:
-            maes.append(f"{A.loc[f, 'peak_mae_kw']:.0f}")
+            maes.append(f"{_short(labels[f])} {A.loc[f, 'peak_mae_kw']:.0f} kW")
             delta = sav.loc[f, "ratchet"] - sav.loc["ridge", "ratchet"]
             deltas.append(f"{money(delta, signed=True)} ({_short(labels[f])})")
 
         changed = "did not change" if _fm_moves(c) < c["policy_spread"] else "changed"
         despite = ", despite a better average MAPE" if better_mape and not beat else ""
         text = (
-            f"<b>Foundation models {changed} the answer.</b> On the synthetic building, {lead[0].lower() + lead[1:]} "
-            f"({' and '.join(maes)} vs {ridge_mae:.0f} kW "
-            f"mean absolute error){despite}. Under {pl['ratchet'].lower()} they moved annual savings by "
+            f"<b>Foundation models {changed} the answer.</b> On the synthetic building, {lead} "
+            f"(mean absolute error: {', '.join(maes)}, ridge {ridge_mae:.0f} kW){despite}. Under {pl['ratchet'].lower()} they moved annual savings by "
             f"{', '.join(deltas)}, against {money(c['policy_spread'])} between policies."
         )
         if timegpt_note:
@@ -428,15 +444,18 @@ def _fm_heading(c: dict) -> str:
     ridge_mae = A.loc["ridge", "peak_mae_kw"]
     ridge_mape = A.loc["ridge", "business_day_mape_pct"]
 
-    mixed = False  # better average accuracy but worse peaks
-    all_beat = True
+    mixed = 0  # models with better average accuracy but worse peaks
+    beat = 0
     for f in fms:
         if A.loc[f, "business_day_mape_pct"] < ridge_mape and A.loc[f, "peak_mae_kw"] > ridge_mae:
-            mixed = True
-        if A.loc[f, "peak_mae_kw"] >= ridge_mae:
-            all_beat = False
+            mixed += 1
+        if A.loc[f, "peak_mae_kw"] < ridge_mae:
+            beat += 1
+    all_beat = beat == len(fms)
 
-    if mixed:
+    if mixed and beat:
+        first = "Better average accuracy did not reliably buy better peaks"
+    elif mixed:
         first = "Better average accuracy did not buy better peaks"
     elif all_beat:
         first = "Foundation models beat ridge on peak error"
@@ -517,6 +536,11 @@ def _load_real(c: dict) -> dict | None:
         "acc": pd.DataFrame(res["forecast_accuracy"]),
         "sweep": pd.DataFrame(res["timing_sweep"]),
     }
+    r["fms"] = []
+    ran = set(r["acc"].forecaster)
+    for f in FM_MODELS:
+        if f in ran:
+            r["fms"].append(f)
     fc = c["fc"]
     pl = c["pl"]
     rows = []
@@ -551,11 +575,15 @@ def _load_real(c: dict) -> dict | None:
         }
         for p in POLICY_ORDER:
             row[p] = pct_best.loc[fc, p]
-        if "timesfm-3.0" in A.index:
-            row["tfm_mae"] = A.loc["timesfm-3.0", "peak_mae_kw"]
-            row["ridge_mae"] = A.loc["ridge", "peak_mae_kw"]
-            row["tfm_usd"] = float(sav.loc["timesfm-3.0", "ratchet"] - sav.loc["ridge", "ratchet"])
-            row["tfm_mape"] = A.loc["timesfm-3.0", "business_day_mape_pct"]
+        row["ridge_mae"] = A.loc["ridge", "peak_mae_kw"]
+        row["fm"] = {}
+        for f in r["fms"]:
+            if f in A.index:
+                row["fm"][f] = {
+                    "mae": A.loc[f, "peak_mae_kw"],
+                    "mape": A.loc[f, "business_day_mape_pct"],
+                    "usd": float(sav.loc[f, "ratchet"] - sav.loc["ridge", "ratchet"]),
+                }
         rows.append(row)
     r["rows"] = rows
 
@@ -565,26 +593,29 @@ def _load_real(c: dict) -> dict | None:
     for p in POLICY_ORDER:
         win_counts[p] = 0
     policy_beats_fc = 0
-    tfm_beat = 0
-    tfm_n = 0
-    tfm_mape_better = 0
-    tfm_usd = []
     for row in rows:
         win_counts[row["winner"]] += 1
         if row["policy_spread"] > row["forecaster_spread"]:
             policy_beats_fc += 1
-        if "tfm_mae" in row:
-            tfm_n += 1
-            tfm_usd.append(row["tfm_usd"])
-            if row["tfm_mae"] < row["ridge_mae"]:
-                tfm_beat += 1
-            if row["tfm_mape"] < row["mape"]:
-                tfm_mape_better += 1
+    # per foundation model: on how many buildings it beat ridge, and by how many dollars
+    r["fm_counts"] = {}
+    for f in r["fms"]:
+        counts = {"n": 0, "beat": 0, "mape_better": 0, "more": 0, "usd": []}
+        for row in rows:
+            if f not in row["fm"]:
+                continue
+            counts["n"] += 1
+            counts["usd"].append(row["fm"][f]["usd"])
+            if row["fm"][f]["mae"] < row["ridge_mae"]:
+                counts["beat"] += 1
+            if row["fm"][f]["mape"] < row["mape"]:
+                counts["mape_better"] += 1
+            if row["fm"][f]["usd"] > 0:
+                counts["more"] += 1
+        r["fm_counts"][f] = counts
     r["n"] = n
     r["win_counts"] = win_counts
     r["policy_beats_fc"] = policy_beats_fc
-    r["tfm_beat"] = tfm_beat
-    r["tfm_n"] = tfm_n
 
     top = max(POLICY_ORDER, key=lambda p: win_counts[p])
     if win_counts[top] == n:
@@ -618,13 +649,34 @@ def _load_real(c: dict) -> dict | None:
         f"business days)"
         + "."
     )
-    if tfm_n:
+    for f in r["fms"]:
+        k = r["fm_counts"][f]
+        if not k["n"]:
+            continue
         r["finding"] += (
-            f" TimesFM 3.0 had the lower MAPE on {_count(tfm_mape_better)} of {_count(tfm_n)}, but beat ridge on peak error on "
-            f"only {_count(tfm_beat)}, and moved {pl['ratchet'].lower()} savings by {money(min(tfm_usd), signed=True)} to "
-            f"{money(max(tfm_usd), signed=True)} a year per building."
+            f" {_short(c['labels'][f])} vs ridge: lower MAPE on {_count(k['mape_better'])} of {_count(k['n'])} buildings, "
+            f"lower peak error on {_count(k['beat'])}, more {pl['ratchet'].lower()} savings on {_count(k['more'])} "
+            f"({money(min(k['usd']), signed=True)} to {money(max(k['usd']), signed=True)} a year per building)."
         )
     return r
+
+
+def _mae_header(c: dict, r: dict) -> str:
+    # one column for the peak errors: ridge first, then each foundation model
+    names = ["ridge"]
+    for f in r["fms"]:
+        names.append(_short(c["labels"][f]))
+    return "Peak MAE, kW: " + " / ".join(names)
+
+
+def _mae_cell(r: dict, row: dict) -> str:
+    values = [f"{row['ridge_mae']:.0f}"]
+    for f in r["fms"]:
+        if f in row["fm"]:
+            values.append(f"{row['fm'][f]['mae']:.0f}")
+        else:
+            values.append("n/a")
+    return " / ".join(values)
 
 
 def _real_figure(c: dict, r: dict) -> dict:
@@ -641,7 +693,7 @@ def _real_table(c: dict, r: dict) -> str:
     head = "<th>Building</th><th>2014 peak</th><th>Battery</th><th>MAPE</th>"
     for p in POLICY_ORDER:
         head += f"<th>{pl[p]}</th>"
-    head += "<th>Policy spread</th><th>Forecaster spread</th><th>TimesFM 3.0 vs ridge, peak MAE</th>"
+    head += "<th>Policy spread</th><th>Forecaster spread</th><th>Peak MAE, kW</th>"
     body = ""
     for row in r["rows"]:
         body += (f"<tr><td>{row['building']}</td><td>{row['peak_kw']:,.0f} kW</td>"
@@ -649,11 +701,7 @@ def _real_table(c: dict, r: dict) -> str:
         for p in POLICY_ORDER:
             body += f"<td>{row[p]:.0f}%</td>"
         body += f"<td>{usd(row['policy_spread'])}</td><td>{usd(row['forecaster_spread'])}</td>"
-        if "tfm_mae" in row:
-            body += f"<td>{row['tfm_mae']:.0f} vs {row['ridge_mae']:.0f} kW</td>"
-        else:
-            body += "<td>n/a</td>"
-        body += "</tr>"
+        body += f"<td>{_mae_cell(r, row)}</td></tr>"
     return f"<thead><tr>{head}</tr></thead><tbody>{body}</tbody>"
 
 
@@ -710,7 +758,8 @@ def build() -> tuple[str, dict]:
             # the table goes after the chart div, inside the section body
             .replace("></div></div></section>", f'></div><div class="tablewrap" style="margin-top:12px"><table>{_real_table(c, real)}</table></div>'
                      f'<p class="how" style="margin-top:10px">Policy columns: share of the best perfect-foresight savings, '
-                     f'{labels[fc]} forecast. Spreads are annual dollars.</p></div></section>')
+                     f'{labels[fc]} forecast. Spreads are annual dollars. '
+                     f'{H.escape(_mae_header(c, real).replace("Peak MAE, kW: ", "Peak MAE: "))}.</p></div></section>')
         )
 
     building_options = []
@@ -925,18 +974,15 @@ def readme_block(c: dict) -> str:
                 f"From UCI's ElectricityLoadDiagrams20112014 (CC BY 4.0), picked by the fixed rule in "
                 f"`src/uci.py`. Battery sized at 30% of each building's 2013 peak, two hours of storage. Policy columns are savings as a "
                 f"share of the best perfect-foresight result across the three policies, with the {labels[c['fc']]} forecast.", ""]
-        header = ["Building", "2014 peak", "Battery", "MAPE"] + policy_names + ["Policy spread", "Forecaster spread", "TimesFM 3.0 vs ridge, peak MAE"]
+        header = ["Building", "2014 peak", "Battery", "MAPE"] + policy_names + ["Policy spread", "Forecaster spread",
+                                                                                 _mae_header(c, r)]
         out += [_md_row(header), "|---|" + "---:|" * (len(header) - 1)]
         for row in r["rows"]:
             cells = [row["building"], f"{row['peak_kw']:,.0f} kW", f"{row['battery_kw']:,.0f} kW / {row['battery_kwh']:,.0f} kWh",
                      f"{row['mape']:.1f}%"]
             for p in POLICY_ORDER:
                 cells.append(f"{row[p]:.0f}%")
-            cells += [usd(row["policy_spread"]), usd(row["forecaster_spread"])]
-            if "tfm_mae" in row:
-                cells.append(f"{row['tfm_mae']:.0f} vs {row['ridge_mae']:.0f} kW")
-            else:
-                cells.append("n/a")
+            cells += [usd(row["policy_spread"]), usd(row["forecaster_spread"]), _mae_cell(r, row)]
             out.append(_md_row(cells))
     out += ["", f"<sub>Generated by `make report` from `out/results.json` ({meta['eval_start']} to {meta['eval_end']}, "
             f"evaluation runtime {meta['runtime_seconds']}s). Edit the code, not these numbers.</sub>"]

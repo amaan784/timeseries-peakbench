@@ -285,7 +285,7 @@ html(
     f'<p class="dek">A {cap:,} kWh / {pwr:,} kW battery on {"a real building (UCI meter " + building + ")" if is_real else "an office building"} '
     f"that peaks at {actual.max():,.0f} kW, billed ${dc:.2f} per kW on each month's single highest 15-minute interval. "
     f"{count(len(real_fcs))} day-ahead forecasters, from "
-    f"last week's load to Google's TimesFM, each drive three dispatch policies. The policy spread is measured for the "
+    f"last week's load to Google's TimesFM and Mistral's Timestral, each drive three dispatch policies. The policy spread is measured for the "
     f"{short(ref)} forecast; the forecaster spread for {POLICY_LABELS[policy].lower()}.</p>"
 )
 if is_real:
@@ -473,7 +473,7 @@ else:
 
 html(
     """<div class="foot">Forecasts are day-ahead: each sees only data up to the midnight before the day it predicts
-    (enforced in <code>tests/test_forecast.py</code>). TimesFM and TimeGPT forecasts are served from the committed cache in
-    <code>out/cache/</code>. Not modelled: battery degradation, grid-services revenue, tariff ratchets, multiple meters.
+    (enforced in <code>tests/test_forecast.py</code>). The TimesFM and Timestral forecasts are served from the committed
+    cache in <code>out/cache/</code>. Not modelled: battery degradation, grid-services revenue, tariff ratchets, multiple meters.
     Method and limitations are in the README.</div>"""
 )
