@@ -33,3 +33,17 @@ def test_money_chart_builds_with_the_gap_brackets():
     for a in fig.layout.annotations:
         texts.append(a.text)
     assert "<b>$800</b><br>gap" in texts
+
+
+def test_bar_charts_leave_room_for_the_longest_label():
+    labels = {"oracle": "Oracle (perfect foresight)", "ridge": "Ridge", "timestral-209m": "Timestral 209M (zero-shot)"}
+    rows = []
+    for f in labels:
+        for p in POLICY_LABELS:
+            rows.append({"forecaster": f, "policy": p, "savings_usd": 1000.0, "pct_of_oracle": 50.0})
+    fig = charts.forecaster_bars(pd.DataFrame(rows), labels, POLICY_LABELS, selected="ridge")
+    # 26 characters of a 12 px monospace font are 187 px wide; those were the ones getting clipped
+    needed = len("Timestral 209M (zero-shot)") * charts.MONO_EM * charts.BAR_LABEL_SIZE
+    assert fig.layout.margin.l > needed
+    # bolding the selected label doesn't count towards its length
+    assert charts.label_room(["<b>Ridge</b>"]) == charts.label_room(["Ridge"])

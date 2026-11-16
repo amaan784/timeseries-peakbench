@@ -14,6 +14,8 @@ from plotly.subplots import make_subplots
 
 FONT = "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif"
 MONO = "'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace"
+MONO_EM = 0.6  # every IBM Plex Mono character is 0.6 em wide
+BAR_LABEL_SIZE = 12
 
 # Paper-ish background, one accent. I ran these through a colour-blindness
 # checker: the accent and both greys stay distinguishable and have at least
@@ -115,6 +117,16 @@ def _layout(fig: go.Figure, mode: str, height: int, transparent: bool = True) ->
     fig.update_xaxes(**axis)
     fig.update_yaxes(**axis)
     return fig
+
+
+def label_room(labels) -> int:
+    # Left margin for the labels of a horizontal bar chart. Plotly's automargin
+    # comes up a few pixels short for these and clips the first letter, but the
+    # label font is monospace, so the width is just the number of characters.
+    longest = 0
+    for s in labels:
+        longest = max(longest, len(s.replace("<b>", "").replace("</b>", "")))
+    return int(longest * MONO_EM * BAR_LABEL_SIZE) + 16
 
 
 def _end_labels(fig, mode, x, items, min_gap):
@@ -238,8 +250,8 @@ def forecaster_bars(
             )
         )
     _layout(fig, mode, height or 70 + 62 * len(order))
-    fig.update_layout(barmode="group", bargap=0.28, bargroupgap=0.12, margin=dict(r=48))
-    fig.update_yaxes(autorange="reversed", showgrid=False, tickfont=dict(color=t["ink2"], size=12))
+    fig.update_layout(barmode="group", bargap=0.28, bargroupgap=0.12, margin=dict(l=label_room(tick.values()), r=48))
+    fig.update_yaxes(autorange="reversed", showgrid=False, tickfont=dict(color=t["ink2"], size=BAR_LABEL_SIZE))
     fig.update_xaxes(title="Annual savings (label: % of perfect-foresight savings captured)",
                      tickprefix="$", tickformat="~s", rangemode="tozero")
     return fig
@@ -272,8 +284,8 @@ def building_bars(rows: pd.DataFrame, labels: dict, policy_labels: dict, mode: s
             )
         )
     _layout(fig, mode, height or 70 + 62 * len(order))
-    fig.update_layout(barmode="group", bargap=0.28, bargroupgap=0.12, margin=dict(r=48))
-    fig.update_yaxes(autorange="reversed", showgrid=False, tickfont=dict(color=t["ink2"], size=12))
+    fig.update_layout(barmode="group", bargap=0.28, bargroupgap=0.12, margin=dict(l=label_room(labels.values()), r=48))
+    fig.update_yaxes(autorange="reversed", showgrid=False, tickfont=dict(color=t["ink2"], size=BAR_LABEL_SIZE))
     fig.update_xaxes(title="Savings as a share of the best perfect-foresight result (%)", ticksuffix="%", rangemode="tozero")
     return fig
 
